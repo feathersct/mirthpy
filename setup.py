@@ -7,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='mirthpy',
-    version='0.1.3',    
+    version='0.1.4',    
     description='A python package to communicate with mirth connects client api.',
     url='https://github.com/feathersct/mirthpy',
     author='Clayton Feathers',

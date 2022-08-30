@@ -24,6 +24,12 @@ Config file must match the following:
 }
 ```
 
+alternatively you can provide the mirth instance (ip or domain name) and user/pass combo
+
+```sh
+service = MirthService(username="{username}", password="{password}", instance="{mirthInstance}")
+```
+
 ## Usage
 
 ```python

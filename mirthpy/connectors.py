@@ -11,9 +11,11 @@ class Connector(MirthElement):
         self.metaDataId = self.getSafeText('metaDataId')
         self.name = self.getSafeText('name')
 
-        prop = Mapping.connectorProperties(self.root.find('properties').attrib['class'])
+        if self.root.find('properties') is not None:
+            prop = Mapping.connectorProperties(self.root.find('properties').attrib['class'])
         
-        self.properties = prop(self.root.find('properties'))
+            self.properties = prop(self.root.find('properties'))
+
         self.transformer = Transformer(self.root.find('transformer'))
         self.filter = Filter(self.root.find('filter'))
 
@@ -165,9 +167,12 @@ class FileReceiverProperties(ConnectorProperties):
         self.sourceConnectorProperties = SourceConnectorProperties(self.root.find('sourceConnectorProperties'))
         self.pollConnectorProperties = PollConnectorProperties(self.root.find('pollConnectorProperties'))
         self.scheme = self.getSafeText("scheme")
-        prop = Mapping.schemeProperties(self.root.find('schemeProperties').attrib['class'])
-        
-        self.properties = prop(self.root.find('schemeProperties'))
+
+        if self.root.find('schemeProperties') is not None:
+            prop = Mapping.schemeProperties(self.root.find('schemeProperties').attrib['class'])
+            
+            self.properties = prop(self.root.find('schemeProperties'))
+
         self.host = self.getSafeText("host")
         self.fileFilter = self.getSafeText("fileFilter")
         self.regex = self.getSafeText("regex")
@@ -268,8 +273,9 @@ class TcpReceiverProperties(MirthElement):
         self.sourceConnectorProperties = SourceConnectorProperties(self.root.find('sourceConnectorProperties'))
         self.listenerConnectorProperties = ListenerConnectorProperties(self.root.find('listenerConnectorProperties'))
         
-        prop = Mapping.modeProperties(self.root.find('transmissionModeProperties').attrib['class'])
-        self.transmissionModeProperties = prop(self.root.find('transmissionModeProperties'))
+        if self.root.find('transmissionModeProperties') is not None:
+            prop = Mapping.modeProperties(self.root.find('transmissionModeProperties').attrib['class'])
+            self.transmissionModeProperties = prop(self.root.find('transmissionModeProperties'))
 
         self.serverMode = self.getSafeText('serverMode')
         self.remoteAddress = self.getSafeText('remoteAddress')
@@ -481,6 +487,12 @@ class OAuth2HttpAuthProperties(MirthElement):
         self.tokenLocation = self.getSafeText('tokenLocation')
         self.locationKey = self.getSafeText('locationKey')
         self.verificationURL = self.getSafeText('verificationURL')
+
+class NoneHttpAuthProperties(MirthElement):
+    def __init__(self, uXml):
+        MirthElement.__init__(self, uXml)
+
+        self.authType = self.getSafeText('authType')
 #endregion
 
 #region SchemeProperties
@@ -604,6 +616,8 @@ class Mapping():
             return CustomHttpAuthProperties
         elif c == "com.mirth.connect.plugins.httpauth.oauth2.OAuth2HttpAuthProperties":
             return OAuth2HttpAuthProperties
+        elif c == "com.mirth.connect.plugins.httpauth.NoneHttpAuthProperties":
+            return NoneHttpAuthProperties
     
     def modeProperties(c: str) -> Type:
         if c == "com.mirth.connect.plugins.mllpmode.MLLPModeProperties":

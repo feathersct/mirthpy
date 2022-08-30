@@ -1,3 +1,4 @@
+import re
 from types import NoneType
 from xml.etree import ElementTree
 import xml.etree.ElementTree as ET
@@ -6,7 +7,7 @@ import xml.etree.ElementTree as ET
 class MirthElement:
     def __init__(self, uXml):
         if not isinstance(uXml, ET.Element):
-            self.root = ET.fromstring(uXml)
+            self.root = ET.fromstring(re.sub('&.+[0-9]+;', '', uXml.decode('utf-8')))
         else:
             self.root = uXml
 
