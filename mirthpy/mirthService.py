@@ -115,6 +115,12 @@ class MirthService:
         tags = requests.get(f"{self.apiUrl}/server/channelTags", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
 
         return ChannelTags(tags.content)
+
+    def getConfigurationMaps(self) -> ConfigurationMaps:
+
+        configMaps = requests.get(f"{self.apiUrl}/server/configurationMap", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
+
+        return ConfigurationMaps(configMaps.content)
     #endregion
 
     #region Channel Calls
@@ -202,12 +208,6 @@ class MirthService:
         events = requests.get(f"{self.apiUrl}/codeTemplates" + encParam, headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
 
         return CodeTemplates(events.content)
-
-    def getConfigurationMaps(self) -> ConfigurationMaps:
-
-        configMaps = requests.get(f"{self.apiUrl}/server/configurationMap", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
-
-        return ConfigurationMaps(configMaps.content)
     #endregion
 
     #region Message Calls
