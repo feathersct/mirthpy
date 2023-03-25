@@ -1,13 +1,11 @@
 import json
-import getpass
 from mirthpy.mirthService import MirthService
 
 #config = json.load(open('config.json'))
 
 #service = MirthService(config)
 
-password = getpass.getpass()
-service = MirthService(username="clayton.feathers", password=password, instance="del-mirthtest-01.int.collectivemedicaltech.com")
+service = MirthService(username="admin", password="admin", instance="localhost")
 service.open()
 
 

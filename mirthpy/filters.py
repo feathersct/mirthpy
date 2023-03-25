@@ -1,72 +1,157 @@
+from enum import Enum
 from typing import Type
+
+from .utilities import escape, getXMLString
 from .mirthElement import MirthElement
 
 
 class Filter(MirthElement):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         MirthElement.__init__(self, uXml)
 
         self.elements = []
         
-        if len(self.root.find('./elements').findall('./*')) > 0:
-            for e in self.root.find('./elements').findall('./*'):
-                prop = rules(e.tag)
+        if uXml is not None:
+            if len(self.root.find('./elements').findall('./*')) > 0:
+                for e in self.root.find('./elements').findall('./*'):
+                    prop = rules(e.tag)
+            
+                    self.elements.append(prop(e))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<elements/>'
         
-                self.elements.append(prop(e))
+        if len(self.elements) > 0:
+            xml = '<elements>'
+            i = 0
+            for e in self.elements:
+                e.sequenceNumber = i
+                xml += f'<{e.className} version="{version}">'
+                xml += e.getXML(version)
+                xml += f'</{e.className}>'
+                i = i+1
+            xml += '</elements>'
+
+        return xml
 
 class FilterRule(MirthElement):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         MirthElement.__init__(self, uXml)
+        self.name = ''
+        self.sequenceNumber = '' #get incremented for each element
+        self.enabled = 'true'
+        self.operator = ''#FilterOperator.AND.value #doesn't get included on the first element in the xml
         
-        self.name = self.getSafeText('name')
-        self.sequenceNumber = self.getSafeText('sequenceNumber')
-        self.enabled = self.getSafeText('enabled')
-        self.operator = self.getSafeText('operator')
+        if uXml is not None:
+            self.name = self.getSafeText('name')
+            self.sequenceNumber = self.getSafeText('sequenceNumber')
+            self.enabled = self.getSafeText('enabled')
+            
+            # the first rule doesn't have an operator
+            if self.getSafeText('operator') is not None:
+                self.operator = self.getSafeText('operator')
 
 class RuleBuilderRule(FilterRule):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         FilterRule.__init__(self, uXml)
-
-        self.field = self.getSafeText('field')
-        self.condition = self.getSafeText('condition')
+        self.className = 'com.mirth.connect.plugins.rulebuilder.RuleBuilderRule'
         self.values = []
+        self.field = ''
+        self.condition = FilterCondition.EXISTS.value
 
-        for e in self.root.findall('./values/string'):
-            self.values.append(e.text)
+        if uXml is not None:
+            self.field = self.getSafeText('field')
+            self.condition = self.getSafeText('condition')
+
+            for e in self.root.findall('./values/string'):
+                self.values.append(e.text)
+
+    def getXML(self, version="3.12.0"):
+        name = f'Accept message if "{self.field}" {getConditionName(self.condition)}'
+        if len(self.values) > 0:
+            name += f' {" or ".join(self.values)}'
+
+        valueXML = '<values/>'
+        if len(self.values) > 0:
+            valueXML = '<values>'
+            for v in self.values:
+                valueXML += f"<string>{escape(v)}</string>"
+            valueXML += '</values>'
+
+
+        xml = f'''
+            {getXMLString(escape(name), 'name')}
+            {getXMLString(self.sequenceNumber, 'sequenceNumber')}
+            {getXMLString(self.enabled, 'enabled')}
+            {getXMLString(self.operator, 'operator', includeIfEmpty=False)}
+            {getXMLString(escape(self.field), 'field')}
+            {getXMLString(self.condition, 'condition')}
+            {valueXML}
+        '''
+        return xml
 
 class ExternalScriptRule(FilterRule):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         FilterRule.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.scriptfilerule.ExternalScriptRule'
+        self.scriptPath = ''
 
-        self.scriptPath = self.getSafeText('scriptPath')
+        if uXml is not None:
+            self.scriptPath = self.getSafeText('scriptPath')
+
+    def getXML(self, version="3.12.0"):
+        return f'''{getXMLString(self.sequenceNumber, 'sequenceNumber')}
+                    {getXMLString(self.enabled, 'enabled')}
+                    {getXMLString(self.operator, 'operator', includeIfEmpty=False)}
+                    {getXMLString(self.scriptPath, "scriptPath")}'''
 
 class JavaScriptRule(FilterRule):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         FilterRule.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.javascriptrule.JavaScriptRule'
+        self.script = ''
 
-        self.script = self.getSafeText('script')
+        if uXml is not None:
+            self.script = self.getSafeText('script')
+
+    def getXML(self, version="3.12.0") -> str:
+        return f'''{getXMLString(self.name, 'name')}
+                    {getXMLString(self.sequenceNumber, 'sequenceNumber')}
+                    {getXMLString(self.enabled, 'enabled')}
+                    {getXMLString(self.operator, 'operator', includeIfEmpty=False)}
+                    {getXMLString(self.script, "script")}'''
 
 class IteratorRule(FilterRule):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         FilterRule.__init__(self, uXml)
+        self.className = 'com.mirth.connect.model.IteratorRule'
 
-        self.properties = IteratorRuleProperties(self.root.find('properties'))
+        self.properties = IteratorRuleProperties()
+
+        if uXml is not None:
+            self.properties = IteratorRuleProperties(self.root.find('properties'))
 
 class IteratorRuleProperties(MirthElement):
-    def __init__(self, uXml):
+    def __init__(self, uXml=None):
         MirthElement.__init__(self, uXml)
 
-        self.target = self.getSafeText('target')
-        self.indexVariable = self.getSafeText('indexVariable')
+        self.target = ''
+        self.indexVariable = ''
         self.prefixSubstitutions = []
+        self.children = ''
+        self.intersectIterations = ''
+        self.breakEarly = ''
 
-        for e in self.root.findall('./prefixSubstitutions/string'):
-            self.prefixSubstitutions.append(e.text)
+        if uXml is not None:
+            self.target = self.getSafeText('target')
+            self.indexVariable = self.getSafeText('indexVariable')
 
+            for e in self.root.findall('./prefixSubstitutions/string'):
+                self.prefixSubstitutions.append(e.text)
 
-        self.children = self.getSafeText('children') 
-        self.intersectIterations = self.getSafeText('intersectIterations')
-        self.breakEarly = self.getSafeText('breakEarly')
+            self.children = self.getSafeText('children') 
+            self.intersectIterations = self.getSafeText('intersectIterations')
+            self.breakEarly = self.getSafeText('breakEarly')
         
 
 def rules(c: str) -> Type:
@@ -82,4 +167,29 @@ def rules(c: str) -> Type:
         return FilterRule
 
 
-        
+class FilterCondition(Enum):
+    EXISTS = 'EXISTS'
+    NOTEXISTS = 'NOT_EXIST'
+    EQUALS = 'EQUALS'
+    NOTEQUALS = 'NOT_EQUAL'
+    CONTAINS = 'CONTAINS'
+    NOTCONTAINS = 'NOT_CONTAIN'
+
+class FilterOperator(Enum):
+    AND = 'AND'
+    OR = 'OR'
+
+def getConditionName(condition):
+    if condition == FilterCondition.EXISTS.value:
+        return 'exists'
+    elif condition == FilterCondition.NOTEXISTS.value:
+        return 'does not exist'
+    elif condition == FilterCondition.EQUALS.value:
+        return 'equals'
+    elif condition == FilterCondition.NOTEQUALS.value:
+        return 'does not equal'
+    elif condition == FilterCondition.CONTAINS.value:
+        return 'contains'
+    elif condition == FilterCondition.NOTCONTAINS.value:
+        return 'does not contain'
+    return ''
