@@ -1,10 +1,19 @@
 # mirthpy
-Basic python api for Mirth Connect
+Python api wrapper for Mirth Connect
 
-> **_NOTE:_**  This api only has Channels, Code Templates, Events, and Users built in. You should still be able to get to the rest, you'll just need to use the ElementTree to navigate.
+> **_NOTE:_**  This api wrapper is not totally complete with all of Mirth's REST api calls. If you have a request for a specific api call, please make an issue on GitHub.
 
+#### Table of Contents
+[Installation](#Installation)
+
+[Setup](#Setup)
+
+[Usage](#Usage)
+
+[Supported Mirth API Calls](#SupportedCalls)
 
 ## Installation
+<a name="Installation"></a>
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install mirthpy.
 
@@ -12,6 +21,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install mirthpy
 pip install mirthpy
 ```
 
+<a name="Setup"></a>
 ## Setup
 Config file must match the following: 
 ```sh
@@ -30,57 +40,7 @@ alternatively you can provide the mirth instance (ip or domain name) and user/pa
 ```sh
 service = MirthService(username="{username}", password="{password}", instance="{mirthInstance}")
 ```
-
-
-## Supported Mirth API Calls
-### Server
-
-| Mirth API Route | mirthpy method | Description                |
-| :-------- | :------- | :------------------------- |
-| `GET /server/version` | `service.getVersion()` | Gets Mirth Instance version |
-| `POST /server/_generateGUID` | `service.getGUID()` | Gets Mirth specific GUID for ids |
-| `GET /server/time` | `service.getTime()` | Gets current Mirth Server time |
-| `GET /server/channelTags` | `service.getTags()` | Gets all tags |
-| `GET /server/configurationMap` | `service.getConfigurationMaps()` | Gets all configuration mappings |
-
-### Events
-
-| Mirth API Route | mirthpy method | Description                |
-| :-------- | :------- | :------------------------- |
-| `GET /events` | `service.getEvents(jsonParams)` | Gets mirth events, can specify what parameters to pass |
-
-### Channel
-
-| Mirth API Route | mirthpy method | Description                |
-| :-------- | :------- | :------------------------- |
-| `POST /channels` | `service.createChannel(channel)` | Creates a channel in mirth instance based on channel object |
-| `GET /channels` | `service.getChannels(channelIds, pollingOnly, includeCodeTemplates)` | Get all channels or certain channels in criteria |
-| `GET /channels/{channelId}` | `service.getChannel(channelId, includeCodeTemplates)` | Get a single channel |
-| `GET /channels/{channelId}` | `service.getChannel(channelId, includeCodeTemplates)` | Get a single channel |
-| `GET /channels/idsAndNames` | `service.getChannelIdsAndNames()` | Get all channel name and ids |
-| `GET /channels/idsAndNames` | `service.getChannelIdByName(name)` | Get only the channel id based on channel name |
-| `POST /channels/{channelId}/_stop` | `service.stopChannel(channelId)` | Stop specified channel |
-| `POST /channels/{channelId}/_start` | `service.startChannel(channelId)` | Start specified channel |
-
-### Channel Status
-
-| Mirth API Route | mirthpy method | Description                |
-| :-------- | :------- | :------------------------- |
-| `GET /channels/statuses` | `service.getChannelStatus(channelIds, filter, includeUndeployed)` | Get Dashboard status of channels |
-
-### Code Template Calls
-
-| Mirth API Route | mirthpy method | Description                |
-| :-------- | :------- | :------------------------- |
-| `GET /codeTemplates` | `service.getCodeTemplates(codeTemplateIds)` | Get all or some Code Templates  |
-
-### Message Calls
-
-| Mirth API Route | mirthpy method | Description                |
-| :-------- | :------- | :------------------------- |
-| `GET /channels/{channelId}/messages` | `service.getMessages(channelId, limit, includeContent, offset, startDate, endDate, status)` | Get messages by channelId with filtering options  |
-| `GET /channels/{channelId}/messages/count` | `service.getMessageCount(channelId, startDate, endDate, status)` | Get messages count by channelId with filtering options  |
-
+<a name="Usage"></a>
 ## Usage
 
 ```python
@@ -147,3 +107,72 @@ for ct in codeTemplates.codeTemplates:
 
 service.close() # to log out and close any service related objects
 ```
+<a name="SupportedCalls"></a>
+## Supported Mirth API Calls
+### Server
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /server/version` | `service.getVersion()` | Gets Mirth Instance version |
+| `POST /server/_generateGUID` | `service.getGUID()` | Gets Mirth specific GUID for ids |
+| `GET /server/time` | `service.getTime()` | Gets current Mirth Server time |
+| `GET /server/channelTags` | `service.getTags()` | Gets all tags |
+| `GET /server/configurationMap` | `service.getConfigurationMaps()` | Gets all configuration mappings |
+
+### Events
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `/events` | `service.getEvents(jsonParams)` | Gets mirth events, can specify what parameters to pass |
+
+### Channel
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `POST /channels` | `service.createChannel(channel)` | Creates a channel in mirth instance based on channel object |
+| `GET /channels` | `service.getChannels(channelIds, pollingOnly, includeCodeTemplates)` | Get all channels or certain channels in criteria |
+| `GET /channels/{channelId}` | `service.getChannel(channelId, includeCodeTemplates)` | Get a single channel |
+| `GET /channels/{channelId}` | `service.getChannel(channelId, includeCodeTemplates)` | Get a single channel |
+| `GET /channels/idsAndNames` | `service.getChannelIdsAndNames()` | Get all channel name and ids |
+| `GET /channels/idsAndNames` | `service.getChannelIdByName(name)` | Get only the channel id based on channel name |
+| `POST /channels/{channelId}/_stop` | `service.stopChannel(channelId)` | Stop specified channel |
+| `POST /channels/{channelId}/_start` | `service.startChannel(channelId)` | Start specified channel |
+
+### Channel Status
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /channels/statuses` | `service.getChannelStatus(channelIds, filter, includeUndeployed)` | Get Dashboard status of channels |
+
+### Code Template Calls
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /codeTemplates` | `service.getCodeTemplates(codeTemplateIds)` | Get all or some Code Templates  |
+
+### Message Calls
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /channels/{channelId}/messages` | `service.getMessages(channelId, limit, includeContent, offset, startDate, endDate, status)` | Get messages by channelId with filtering options  |
+| `GET /channels/{channelId}/messages/count` | `service.getMessageCount(channelId, startDate, endDate, status)` | Get messages count by channelId with filtering options  |
+
+### Channel Deployment
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `POST /channels/_deploy` | `service.deployChannels(channelIds, returnErrors)` | Deploy set of channels  |
+
+### Channel Statistics
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /channels/statistics` | `service.getChannelStatistics(channelIds, includeUndeployed, includeMetadataId, excludeMetaDataId, aggregateStates)` | Get Channel Statistics  |
+
+
+### Extensions (Commercial License)
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /extensions/history/channels/{channelId}/snapshots` | `service.getChannelHistory(channelId)` | Get Channel History  |
+| `GET /extensions/history/channels/{channelId}/snapshots/{snapshotId}` | `service.getSnapshot(channelId, snapshotId)` | Get Channel History Snapshot  |
