@@ -1,5 +1,4 @@
 from setuptools import setup
-import version
 
 # read the contents of your README file
 from pathlib import Path
@@ -8,7 +7,7 @@ long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='mirthpy',
-    version=version.__version__,    
+    version="0.1.5",    
     description='A python package to communicate with mirth connects client api.',
     url='https://github.com/feathersct/mirthpy',
     author='Clayton Feathers',

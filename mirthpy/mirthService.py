@@ -1,5 +1,6 @@
 import requests
 
+from .serverStats import SystemStats
 from .channelStatus import DashboardStatusList
 from .channelStatistics import ChannelStatisticsList
 from .mirthDate import MirthDate
@@ -115,12 +116,11 @@ class MirthService:
         tags = requests.get(f"{self.apiUrl}/server/channelTags", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
 
         return ChannelTags(tags.content)
+    
+    def getSystemStats(self) -> SystemStats:
+        stats = requests.get(f"{self.apiUrl}/system/stats", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
 
-    def getConfigurationMaps(self) -> ConfigurationMaps:
-
-        configMaps = requests.get(f"{self.apiUrl}/server/configurationMap", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
-
-        return ConfigurationMaps(configMaps.content)
+        return SystemStats(stats.content)
     #endregion
 
     #region Channel Calls
@@ -208,6 +208,12 @@ class MirthService:
         events = requests.get(f"{self.apiUrl}/codeTemplates" + encParam, headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
 
         return CodeTemplates(events.content)
+
+    def getConfigurationMaps(self) -> ConfigurationMaps:
+
+        configMaps = requests.get(f"{self.apiUrl}/server/configurationMap", headers={'X-Requested-With': 'XMLHttpRequest'}, cookies={'JSESSIONID': self.jsessionId}, verify=False)
+
+        return ConfigurationMaps(configMaps.content)
     #endregion
 
     #region Message Calls
