@@ -280,7 +280,7 @@ class MirthService:
 
     #region Channel Calls
     def createChannel(self, channel, set_time = True):
-        r"""Creates a new channel based off of mirthapi channel object.
+        r"""Creates a new channel based off of mirthpy channel object.
 
         :param channel: Channel object 
         :return: True if successful, False if not success, with error message.
@@ -308,7 +308,7 @@ class MirthService:
             return (False, response.status_code + " Error: Could not create channel.")
 
     def updateChannel(self, channel, override = False, set_time = True):
-        r"""Updates a channel based off of mirthapi channel object.
+        r"""Updates a channel based off of mirthpy channel object.
 
         :param channel: Channel object 
         :return: True if successful, False if not success, with error message.
