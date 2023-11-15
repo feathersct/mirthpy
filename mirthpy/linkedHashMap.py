@@ -16,7 +16,7 @@ class LinkedHashMap(MirthElement):
     def getXML(self, version = "3.12.0"):
         xml = ""
         for e in self.entry:
-            xml += f'{getXMLString(e.getXML(version), "entry")}'
+            xml += getXMLString(e.getXML(version), "entry")
 
         return xml
 
@@ -38,12 +38,12 @@ class Entry(MirthElement):
     def getXML(self, version = "3.12.0"):
         xml = ""
         for s in self.string:
-            xml += f'{getXMLString(s, "string")}'
+            xml += getXMLString(s, "string")
 
         if len(self.list) > 0:
             xml += '<list>'
             for l in self.list:
-                xml += f'{getXMLString(l, "string")}'
+                xml += getXMLString(l, "string")
 
             xml += '</list>'
 

@@ -36,9 +36,7 @@ class DashboardStatus(MirthElement):
 
     def getXML(self, version="3.12.0"):
         #TODO: Implement
-        xml = f'''
-            {getXMLString(self.channelId, "channelId")}
-        '''
+        xml = getXMLString(self.channelId, "channelId")
         return xml
     
 

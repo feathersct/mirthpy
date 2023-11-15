@@ -2,19 +2,15 @@ import re
 from xml.etree import ElementTree
 import xml.etree.ElementTree as ET
 from .utilities import escape
-from .defaults import Defaults 
 
 
 class MirthElement:
     def __init__(self, uXml):
         if not isinstance(uXml, ET.Element):
             if uXml is None:
-                try:
-                    self.root = ET.fromstring(self.getDefaultXML())
-                except:
-                    self.root = None
+                self.root = None
             else:
-                self.root = ET.fromstring(re.sub('&.+[0-9]+;', '', uXml.decode('utf-8')))
+                self.root = ET.fromstring(re.sub('&.+[0-9]+;[^\x00-\x7F]+', '', re.sub('[^\x00-\x7F]+', '', uXml.decode('utf-8'))))
         else:
             self.root = uXml
 
@@ -33,20 +29,15 @@ class MirthElement:
 
     def getSafeText(self, prop: str) -> str:
         return self.root.find(prop).text if self.root.find(prop) != None else None
-    
-    def getDefaultXML(self):
-        childClass = self.__class__.__name__
-        
-        return Defaults.getDefault(childClass)
 
     def getXML(self, version = "3.12.0") -> str:
         ret = ""
-        parentTag = f"<{self.root.tag}"
+        parentTag = "<{}".format(self.root.tag)
 
         if 'className' in vars(self):
-            parentTag += f' class="{self.className}"' 
+            parentTag += ' class="{}"'.format(self.className)
         if 'version' in vars(self):
-            parentTag += f' version="{self.version}"'
+            parentTag += ' version="{}"'.format(self.version)
 
         parentTag += ">"
         ret += parentTag
@@ -57,36 +48,35 @@ class MirthElement:
         
         for k in keys:
             if type(variables[k]) in [str]:
-                ret += f'<{k}>{escape(variables[k])}</{k}>'
+                ret += '<{}>{}</{}>'.format(k, escape(variables[k]), k)
             elif type(variables[k]) in [type(None)]:
-                ret += f'<{k}></{k}>'
+                ret += '<{}></{}>'.format(k, k)
             elif type(variables[k]) == ElementTree.Element:
                 ret += ElementTree.tostring(variables[k], method='xml').decode().replace('\n', '')
             elif issubclass(type(variables[k]), MirthElement):
                 ret += variables[k].getXML()
             elif type(variables[k]) == tuple:
                 for t in variables[k]:
-                    ret += f'<string>{escape(t)}</string>'
+                    ret += '<string>{}</string>'.format(escape(t))
             elif type(variables[k]) == list:
                 if len(variables[k]) == 0:
-                    ret += f'<{k}/>'
+                    ret += '<{}/>'.format(k)
                 else:
                     if k not in ['entry', 'string']:
-                        ret += f'<{k}>'
+                        ret += '<{}>'.format(k)
                     for x in variables[k]:
                         if type(x) in [str]:
-                            ret += f'<string>{escape(x)}</string>'
+                            ret += '<string>{}</string>'.format(escape(x))
                         elif type(x) in [bool]:
-                            ret += f'<boolean>{str(x).lower()}</boolean>'
+                            ret += '<boolean>{}</boolean>'.format(str(x).lower())
                         elif type(x) in [type(None)]:
                             f = ''
-                            #print(f'')
                         elif type(variables[k]) == ElementTree.Element:
                             ret += ElementTree.tostring(x, method='xml').decode().replace('\n', '')
                         elif issubclass(type(x), MirthElement):
                             ret += x.getXML()
                     if k not in ['entry', 'string']:
-                        ret += f'</{k}>'
-        ret += f"</{self.root.tag}>"
+                        ret += '</{}>'.format(k)
+        ret += "</{}>".format(self.root.tag)
 
         return ret

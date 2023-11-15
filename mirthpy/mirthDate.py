@@ -14,10 +14,13 @@ class MirthDate(MirthElement):
             self.timezone = self.getSafeText('timezone')
 
     def getXML(self, version):
-        xml = f'''
-            <time>{self.time}</time>
-            <timezone>{self.timezone}</timezone>
-        '''
+        xml = '<time>'
+        xml += self.time
+        xml += '</time>'
+        xml += '<timezone>'
+        xml += self.timezone
+        xml += '</timezone>'
+        
         return xml
 
     def getDateTime(self):

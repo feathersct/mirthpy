@@ -16,7 +16,7 @@ class ChannelTags(MirthElement):
         xml = ""
 
         for tag in self.channelTags:
-            xml += f'''{getXMLString(tag.getXML(version), 'channelTag')}'''
+            xml += getXMLString(tag.getXML(version), 'channelTag')
 
         return xml
     
@@ -42,13 +42,14 @@ class ChannelTag(MirthElement):
     def getXML(self, version="3.12.0"):
         channelIds = "<channelIds>"
         for string in self.channelId:
-            channelIds += f"<string>{string}</string>"
+            channelIds += "<string>{}</string>".format(string)
         channelIds += "</channelIds>"
 
-        return f'''{getXMLString(self.id, "id")}
-                    {getXMLString(self.name, "name")}
-                    {channelIds}
-                    {getXMLString(self.backgroundColor.getXML(version), "backgroundColor")}'''
+        xml = getXMLString(self.id, "id")
+        xml += getXMLString(self.name, "name")
+        xml += channelIds
+        xml += getXMLString(self.backgroundColor.getXML(version), "backgroundColor")
+        return xml
     
 class BackgroundColor(MirthElement):
     def __init__(self, uXml = None):
@@ -66,7 +67,8 @@ class BackgroundColor(MirthElement):
             self.alpha = self.getSafeText('alpha')
     
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.red, "red")}
-                    {getXMLString(self.green, "green")}
-                    {getXMLString(self.blue, "blue")}
-                    {getXMLString(self.alpha, "alpha")}'''
+        xml = getXMLString(self.red, "red")
+        xml += getXMLString(self.green, "green")
+        xml += getXMLString(self.blue, "blue")
+        xml += getXMLString(self.alpha, "alpha")
+        return xml

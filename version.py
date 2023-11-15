@@ -1,2 +1,2 @@
-__version__ = "0.1.5"
-__description__ = "Mirth objects can now be built without an xml."
+__version__ = "0.3.7"
+__description__ = "Added support for quite a few more api calls."

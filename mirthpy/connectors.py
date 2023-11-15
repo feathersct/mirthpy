@@ -31,27 +31,27 @@ class Connector(MirthElement):
     def getXML(self, version = '3.12.0'):
         respTransXML = ""
         if self.responseTransformer is not None:
-            respTransXML += f'<responseTransformer version="{version}">'
+            respTransXML += '<responseTransformer version="{}">'.format(version)
             respTransXML += self.responseTransformer.getXML(version)
             respTransXML += '</responseTransformer>'
 
-        xml = f'''
-            {getXMLString(self.metaDataId, "metaDataId")}
-            {getXMLString(self.name, "name")}
-            <properties class="{self.properties.className}" version="{version}">
-                {self.properties.getXML(version)}
-            </properties>
-            <transformer version="{version}">
-                {self.transformer.getXML(version)}
-            </transformer>
-            {respTransXML}
-            <filter version="{version}">
-                {self.filter.getXML(version)}
-            </filter>
-            {getXMLString(self.transportName, "transportName")}
-            {getXMLString(self.mode, "mode")}
-            {getXMLString(self.enabled, "enabled")}
-            {getXMLString(self.waitForPrevious, "waitForPrevious")}'''
+        xml = ''
+        xml += getXMLString(self.metaDataId, "metaDataId")
+        xml += getXMLString(self.name, "name")
+        xml += '<properties class="{}" version="{}">'.format(self.properties.className, version)
+        xml += self.properties.getXML(version)
+        xml += '</properties>'
+        xml += '<transformer version="{}">'.format(version)
+        xml += self.transformer.getXML(version)
+        xml += '</transformer>'
+        xml += respTransXML
+        xml += '<filter version="{}">'.format(version)
+        xml += self.filter.getXML(version)
+        xml += '</filter>'
+        xml += getXMLString(self.transportName, "transportName")
+        xml += getXMLString(self.mode, "mode")
+        xml += getXMLString(self.enabled, "enabled")
+        xml += getXMLString(self.waitForPrevious, "waitForPrevious")
 
         return xml
 
@@ -71,22 +71,22 @@ class SourceConnector(Connector):
                 self.properties = prop(self.root.find('properties'))
     
     def getXML(self, version = '3.12.0'):
-        xml = f'''
-            {getXMLString(self.metaDataId, "metaDataId")}
-            {getXMLString(self.name, "name")}
-            <properties class="{self.properties.className}" version="{version}">
-                {self.properties.getXML(version)}
-            </properties>
-            <transformer version="{version}">
-                {self.transformer.getXML(version)}
-            </transformer>
-            <filter version="{version}">
-                {self.filter.getXML(version)}
-            </filter>
-            {getXMLString(self.properties.transportName, "transportName")}
-            {getXMLString(self.mode, "mode")}
-            {getXMLString(self.enabled, "enabled")}
-            {getXMLString(self.waitForPrevious, "waitForPrevious")}'''
+        xml = ''
+        xml += getXMLString(self.metaDataId, "metaDataId")
+        xml += getXMLString(self.name, "name")
+        xml += '<properties class="{}" version="{}">'.format(self.properties.className, version)
+        xml += self.properties.getXML(version)
+        xml += '</properties>'
+        xml += '<transformer version="{}">'.format(version)
+        xml += self.transformer.getXML(version)
+        xml += '</transformer>'
+        xml += '<filter version="{}">'.format(version)
+        xml += self.filter.getXML(version)
+        xml += '</filter>'
+        xml += getXMLString(self.properties.transportName, "transportName")
+        xml += getXMLString(self.mode, "mode")
+        xml += getXMLString(self.enabled, "enabled")
+        xml += getXMLString(self.waitForPrevious, "waitForPrevious")
 
         return xml
 
@@ -109,25 +109,25 @@ class DestinationConnectorElement(Connector):
                 self.properties = prop(self.root.find('properties'))
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''
-            {getXMLString(self.metaDataId, "metaDataId")}
-            {getXMLString(self.name, "name")}
-            <properties class="{self.properties.className}" version="{version}">
-                {self.properties.getXML(version)}
-            </properties>
-            <transformer version="{version}">
-                {self.transformer.getXML(version)}
-            </transformer>
-            <responseTransformer version="{version}">
-                {self.responseTransformer.getXML(version)}
-            </responseTransformer>
-            <filter version="{version}">
-                {self.filter.getXML(version)}
-            </filter>
-            {getXMLString(self.properties.transportName, "transportName")}
-            {getXMLString(self.mode, "mode")}
-            {getXMLString(self.enabled, "enabled")}
-            {getXMLString(self.waitForPrevious, "waitForPrevious")}'''
+        xml = ''
+        xml += getXMLString(self.metaDataId, "metaDataId")
+        xml += getXMLString(self.name, "name")
+        xml += '<properties class="{}" version="{}">'.format(self.properties.className, version)
+        xml += self.properties.getXML(version)
+        xml += '</properties>'
+        xml += '<transformer version="{}">'.format(version)
+        xml += self.transformer.getXML(version)
+        xml += '</transformer>'
+        xml += '<responseTransformer version="{}">'.format(version)
+        xml += self.responseTransformer.getXML(version)
+        xml += '</responseTransformer>'
+        xml += '<filter version="{}">'.format(version)
+        xml += self.filter.getXML(version)
+        xml += '</filter>'
+        xml += getXMLString(self.properties.transportName, "transportName")
+        xml += getXMLString(self.mode, "mode")
+        xml += getXMLString(self.enabled, "enabled")
+        xml += getXMLString(self.waitForPrevious, "waitForPrevious")
 
         return xml
 
@@ -171,15 +171,17 @@ class SourceConnectorProperties(MirthElement):
             self.queueBufferSize = self.getSafeText("queueBufferSize")
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''{getXMLString(self.responseVariable, "responseVariable")}
-                {getXMLString(self.respondAfterProcessing, "respondAfterProcessing")}
-                {getXMLString(self.processBatch, "processBatch")}
-                {getXMLString(self.firstResponse, "firstResponse")}
-                {getXMLString(self.processingThreads, "processingThreads")}
-                <resourceIds class="linked-hash-map">
-                    {self.resourceIds.getXML(version)}
-                </resourceIds>
-                {getXMLString(self.queueBufferSize, "queueBufferSize")}'''
+        xml = ''
+        xml += getXMLString(self.responseVariable, "responseVariable")
+        xml += getXMLString(self.respondAfterProcessing, "respondAfterProcessing")
+        xml += getXMLString(self.processBatch, "processBatch")
+        xml += getXMLString(self.firstResponse, "firstResponse")
+        xml += getXMLString(self.processingThreads, "processingThreads")
+        xml += '<resourceIds class="linked-hash-map">'
+        xml += self.resourceIds.getXML(version)
+        xml += '</resourceIds>'
+        xml += getXMLString(self.queueBufferSize, "queueBufferSize")
+                
         return xml
 
 class ListenerConnectorProperties(MirthElement):
@@ -193,9 +195,7 @@ class ListenerConnectorProperties(MirthElement):
             self.port = self.getSafeText('port')
 
     def getXML(self, version = '3.12.0'):
-        return f'''
-            <host>{self.host}</host>
-            <port>{self.port}</port>'''
+        return '<host>{}</host><port>{}</port>'.format(self.host, self.port)
 
 class PollConnectorProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -208,6 +208,7 @@ class PollConnectorProperties(MirthElement):
         self.pollingHour = '0'
         self.pollingMinute = '0'
         self.pollConnectorPropertiesAdvanced = PollConnectorPropertiesAdvanced()
+        self.cronJobs = []
 
         if uXml is not None:
             self.pollingType = self.getSafeText('pollingType')
@@ -216,17 +217,28 @@ class PollConnectorProperties(MirthElement):
             self.pollingHour = self.getSafeText('pollingHour')
             self.pollingMinute = self.getSafeText('pollingMinute')
             self.pollConnectorPropertiesAdvanced = PollConnectorPropertiesAdvanced(self.root.find('pollConnectorPropertiesAdvanced'))
+            self.cronJobs = []
+
+            for property in self.root.find('cronJobs').findall('./cronProperty'):
+                self.cronJobs.append(CronProperty(property))
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''
-        {getXMLString(self.pollingType, "pollingType")}
-        {getXMLString(self.pollOnStart, "pollOnStart")}
-        {getXMLString(self.pollingFrequency, "pollingFrequency")}
-        {getXMLString(self.pollingHour, "pollingHour")}
-        {getXMLString(self.pollingMinute, "pollingMinute")}
-        <cronJobs/>
-        {getXMLString(self.pollConnectorPropertiesAdvanced.getXML(version), "pollConnectorPropertiesAdvanced")}
-        '''
+        cronXML = "<cronJobs/>"
+
+        if len(self.cronJobs) > 0:
+            cronXML = "<cronJobs>"
+            for job in self.cronJobs:
+                cronXML += job.getXML(version)
+            cronXML += "</cronJobs>"
+
+        xml = ''
+        xml += getXMLString(self.pollingType, "pollingType")
+        xml += getXMLString(self.pollOnStart, "pollOnStart")
+        xml += getXMLString(self.pollingFrequency, "pollingFrequency")
+        xml += getXMLString(self.pollingHour, "pollingHour")
+        xml += getXMLString(self.pollingMinute, "pollingMinute")
+        xml += cronXML
+        xml += getXMLString(self.pollConnectorPropertiesAdvanced.getXML(version), "pollConnectorPropertiesAdvanced")
         return xml
 
 class PollConnectorPropertiesAdvanced(MirthElement):
@@ -257,23 +269,40 @@ class PollConnectorPropertiesAdvanced(MirthElement):
                 self.inactiveDays.append(e.text=='true')
 
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-            {getXMLString(self.weekly, "weekly")}
-            <inactiveDays>
-            '''
+        xml = getXMLString(self.weekly, "weekly")
+        xml += '<inactiveDays>'
 
         for b in self.inactiveDays:
-            xml += f'''{getXMLString(str(b).lower(), "boolean")}'''
+            xml += getXMLString(str(b).lower(), "boolean")
 
-        xml += f'''
-            </inactiveDays>
-            {getXMLString(self.dayOfMonth, "dayOfMonth")}
-            {getXMLString(self.allDay, "allDay")}
-            {getXMLString(self.startingHour, "startingHour")}
-            {getXMLString(self.startingMinute, "startingMinute")}
-            {getXMLString(self.endingHour, "endingHour")}
-            {getXMLString(self.endingMinute, "endingMinute")}
-        '''
+        xml += '</inactiveDays>'
+        xml += getXMLString(self.dayOfMonth, "dayOfMonth")
+        xml += getXMLString(self.allDay, "allDay")
+        xml += getXMLString(self.startingHour, "startingHour")
+        xml += getXMLString(self.startingMinute, "startingMinute")
+        xml += getXMLString(self.endingHour, "endingHour")
+        xml += getXMLString(self.endingMinute, "endingMinute")
+
+        return xml
+
+class CronProperty(MirthElement):
+    def __init__(self, uXml = None):
+        MirthElement.__init__(self, uXml)
+
+        self.description = ''
+        self.expression = ''
+
+        if uXml is not None:
+            self.description = self.getSafeText('description')
+            self.expression = self.getSafeText('expression')
+            
+
+    def getXML(self, version = "3.12.0"):
+        xml = "<cronProperty>"
+        xml += getXMLString(escape(self.description), "description")
+        xml += getXMLString(escape(self.expression), "expression")
+        xml += "</cronProperty>"
+
         return xml
 
 
@@ -284,13 +313,13 @@ class VmReceiverProperties(ConnectorProperties):
         self.className = 'com.mirth.connect.connectors.vm.VmReceiverProperties'
         self.transportName = 'Channel Reader'
 
-        self.sourceConnectorProperties = SourceConnectorProperties(self.root.find('sourceConnectorProperties'))
+        self.sourceConnectorProperties = SourceConnectorProperties()
 
+        if uXml is not None:
+            self.sourceConnectorProperties = SourceConnectorProperties(self.root.find('sourceConnectorProperties'))
+            
     def getXML(self, version = '3.12.0'):
-        xml = f'''<pluginProperties/>
-        <sourceConnectorProperties version="{version}">
-            {self.sourceConnectorProperties.getXML(version)}
-        </sourceConnectorProperties>'''
+        xml = '<pluginProperties/><sourceConnectorProperties version="{}">{}</sourceConnectorProperties>'.format(version, self.sourceConnectorProperties.getXML(version))
         return xml
 
 class DICOMReceiverProperties(ConnectorProperties):
@@ -367,43 +396,43 @@ class DICOMReceiverProperties(ConnectorProperties):
             self.localApplicationEntity =  self.getSafeText("localApplicationEntity")
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''<pluginProperties/>
-         <listenerConnectorProperties version="{version}">
-            {self.listenerConnectorProperties.getXML(version)}
-        </listenerConnectorProperties>
-        <sourceConnectorProperties version="{version}">
-            {self.sourceConnectorProperties.getXML(version)}
-        </sourceConnectorProperties>
-        {getXMLString(self.applicationEntity, "applicationEntity")}
-        {getXMLString(self.localHost, "localHost")}
-        {getXMLString(self.localPort, "localPort")}
-        {getXMLString(self.localApplicationEntity, "localApplicationEntity")}
-        {getXMLString(self.soCloseDelay, "soCloseDelay")}
-        {getXMLString(self.releaseTo, "releaseTo")}
-        {getXMLString(self.requestTo, "requestTo")}
-        {getXMLString(self.idleTo, "idleTo")}
-        {getXMLString(self.reaper, "reaper")}
-        {getXMLString(self.rspDelay, "rspDelay")}
-        {getXMLString(self.pdv1, "pdv1")}
-        {getXMLString(self.sndpdulen, "sndpdulen")}
-        {getXMLString(self.rcvpdulen, "rcvpdulen")}
-        {getXMLString(self.asyncc, "async")}
-        {getXMLString(self.bigEndian, "bigEndian")}
-        {getXMLString(self.bufSize, "bufSize")}
-        {getXMLString(self.defts, "defts")}
-        {getXMLString(self.dest, "dest")}
-        {getXMLString(self.nativeData, "nativeData")}
-        {getXMLString(self.sorcvbuf, "sorcvbuf")}
-        {getXMLString(self.sosndbuf, "sosndbuf")}
-        {getXMLString(self.tcpDelay, "tcpDelay")}
-        {getXMLString(self.keyPW, "keyPW")}
-        {getXMLString(self.keyStore, "keyStore")}
-        {getXMLString(self.keyStorePW, "keyStorePW")}
-        {getXMLString(self.noClientAuth, "noClientAuth")}
-        {getXMLString(self.nossl2, "nossl2")}
-        {getXMLString(self.tls, "tls")}
-        {getXMLString(self.trustStore, "trustStore")}
-        {getXMLString(self.trustStorePW, "trustStorePW")}'''
+        xml = '<pluginProperties/>'
+        xml += '<listenerConnectorProperties version="{}">'.format(version)
+        xml += self.listenerConnectorProperties.getXML(version)
+        xml += '</listenerConnectorProperties>'
+        xml += '<sourceConnectorProperties version="{}">'.format(version)
+        xml += self.sourceConnectorProperties.getXML(version)
+        xml += '</sourceConnectorProperties>'
+        xml += getXMLString(self.applicationEntity, "applicationEntity")
+        xml += getXMLString(self.localHost, "localHost")
+        xml += getXMLString(self.localPort, "localPort")
+        xml += getXMLString(self.localApplicationEntity, "localApplicationEntity")
+        xml += getXMLString(self.soCloseDelay, "soCloseDelay")
+        xml += getXMLString(self.releaseTo, "releaseTo")
+        xml += getXMLString(self.requestTo, "requestTo")
+        xml += getXMLString(self.idleTo, "idleTo")
+        xml += getXMLString(self.reaper, "reaper")
+        xml += getXMLString(self.rspDelay, "rspDelay")
+        xml += getXMLString(self.pdv1, "pdv1")
+        xml += getXMLString(self.sndpdulen, "sndpdulen")
+        xml += getXMLString(self.rcvpdulen, "rcvpdulen")
+        xml += getXMLString(self.asyncc, "async")
+        xml += getXMLString(self.bigEndian, "bigEndian")
+        xml += getXMLString(self.bufSize, "bufSize")
+        xml += getXMLString(self.defts, "defts")
+        xml += getXMLString(self.dest, "dest")
+        xml += getXMLString(self.nativeData, "nativeData")
+        xml += getXMLString(self.sorcvbuf, "sorcvbuf")
+        xml += getXMLString(self.sosndbuf, "sosndbuf")
+        xml += getXMLString(self.tcpDelay, "tcpDelay")
+        xml += getXMLString(self.keyPW, "keyPW")
+        xml += getXMLString(self.keyStore, "keyStore")
+        xml += getXMLString(self.keyStorePW, "keyStorePW")
+        xml += getXMLString(self.noClientAuth, "noClientAuth")
+        xml += getXMLString(self.nossl2, "nossl2")
+        xml += getXMLString(self.tls, "tls")
+        xml += getXMLString(self.trustStore, "trustStore")
+        xml += getXMLString(self.trustStorePW, "trustStorePW")
         return xml
 
 class DatabaseReceiverProperties(ConnectorProperties):
@@ -450,28 +479,28 @@ class DatabaseReceiverProperties(ConnectorProperties):
             self.encoding = self.getSafeText("encoding")
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''<pluginProperties/>
-         <pollConnectorProperties version="{version}">
-            {self.pollConnectorProperties.getXML(version)}
-        </pollConnectorProperties>
-        <sourceConnectorProperties version="{version}">
-            {self.sourceConnectorProperties.getXML(version)}
-        </sourceConnectorProperties>
-        {getXMLString(self.driver, "driver")}
-        {getXMLString(self.url, "url")}
-        {getXMLString(self.username, "username")}
-        {getXMLString(self.password, "password")}
-        {getXMLString(escape(self.select), "select")}
-        {getXMLString(escape(self.update), "update")}
-        {getXMLString(self.useScript, "useScript")}
-        {getXMLString(self.aggregateResults, "aggregateResults")}
-        {getXMLString(self.cacheResults, "cacheResults")}
-        {getXMLString(self.keepConnectionOpen, "keepConnectionOpen")}
-        {getXMLString(self.updateMode, "updateMode")}
-        {getXMLString(self.retryCount, "retryCount")}
-        {getXMLString(self.retryInterval, "retryInterval")}
-        {getXMLString(self.fetchSize, "fetchSize")}
-        {getXMLString(self.encoding, "encoding")}'''
+        xml = '<pluginProperties/>'
+        xml += '<pollConnectorProperties version="{}">'.format(version)
+        xml += self.pollConnectorProperties.getXML(version)
+        xml += '</pollConnectorProperties>'
+        xml += '<sourceConnectorProperties version="{}">'.format(version)
+        xml += self.sourceConnectorProperties.getXML(version)
+        xml += '</sourceConnectorProperties>'
+        xml += getXMLString(self.driver, "driver")
+        xml += getXMLString(self.url, "url")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(escape(self.select), "select")
+        xml += getXMLString(escape(self.update), "update")
+        xml += getXMLString(self.useScript, "useScript")
+        xml += getXMLString(self.aggregateResults, "aggregateResults")
+        xml += getXMLString(self.cacheResults, "cacheResults")
+        xml += getXMLString(self.keepConnectionOpen, "keepConnectionOpen")
+        xml += getXMLString(self.updateMode, "updateMode")
+        xml += getXMLString(self.retryCount, "retryCount")
+        xml += getXMLString(self.retryInterval, "retryInterval")
+        xml += getXMLString(self.fetchSize, "fetchSize")
+        xml += getXMLString(self.encoding, "encoding")
         return xml
       
 class FileReceiverProperties(ConnectorProperties):
@@ -485,33 +514,33 @@ class FileReceiverProperties(ConnectorProperties):
         self.scheme = 'FILE'
         self.schemeProperties = None
 
-        self.host = self.getSafeText("host")
-        self.fileFilter = self.getSafeText("fileFilter")
-        self.regex = self.getSafeText("regex")
-        self.directoryRecursion = self.getSafeText("directoryRecursion")
-        self.ignoreDot = self.getSafeText("ignoreDot")
-        self.anonymous = self.getSafeText("anonymous")
-        self.username = self.getSafeText("username")
-        self.password = self.getSafeText("password")
-        self.timeout = self.getSafeText("timeout")
-        self.secure = self.getSafeText("secure")
-        self.passive = self.getSafeText("passive")
-        self.validateConnection = self.getSafeText("validateConnection")
-        self.afterProcessingAction = self.getSafeText("afterProcessingAction")
-        self.moveToDirectory = self.getSafeText("moveToDirectory")
-        self.moveToFileName = self.getSafeText("moveToFileName")
-        self.errprReadingAction = self.getSafeText("errorReadingAction")
-        self.errorResponseAction = self.getSafeText("errorResponseAction")
-        self.errorMoveToDirectory = self.getSafeText("errorMoveToDirectory")
-        self.errorMoveToFileName = self.getSafeText("errorMoveToFileName")
-        self.checkFileAge = self.getSafeText("checkFileAge")
-        self.fileAge = self.getSafeText("fileAge")
-        self.fileSizeMinimum = self.getSafeText("fileSizeMinimum")
-        self.fileSizeMaximum = self.getSafeText("fileSizeMaximum")
-        self.ignoreFileSizeMaximum = self.getSafeText("ignoreFileSizeMaximum")
-        self.sortBy = self.getSafeText("sortBy")
-        self.binary = self.getSafeText("binary")
-        self.charsetEncoding = self.getSafeText("charsetEncoding")
+        self.host = ''
+        self.fileFilter = '*'
+        self.regex = 'false'
+        self.directoryRecursion = 'false'
+        self.ignoreDot = 'true'
+        self.anonymous = 'false'
+        self.username = 'anonymous'
+        self.password = 'anonymous'
+        self.timeout = '10000'
+        self.secure = 'true'
+        self.passive = 'true'
+        self.validateConnection = 'true'
+        self.afterProcessingAction = 'NONE'
+        self.moveToDirectory = ''
+        self.moveToFileName = ''
+        self.errprReadingAction = 'NONE'
+        self.errorResponseAction = 'AFTER_PROCESSING'
+        self.errorMoveToDirectory = ''
+        self.errorMoveToFileName = ''
+        self.checkFileAge = 'true'
+        self.fileAge = '1000'
+        self.fileSizeMinimum = '0'
+        self.fileSizeMaximum = ''
+        self.ignoreFileSizeMaximum = 'true'
+        self.sortBy = 'date'
+        self.binary = 'false'
+        self.charsetEncoding = 'DEFAULT_ENCODING'
 
         if uXml is not None:
             self.sourceConnectorProperties = SourceConnectorProperties(self.root.find('sourceConnectorProperties'))
@@ -556,48 +585,44 @@ class FileReceiverProperties(ConnectorProperties):
         schemPropXML = ""
 
         if self.schemeProperties is not None:
-            schemPropXML = f'<schemeProperties class="{self.schemeProperties.className}">'
+            schemPropXML = '<schemeProperties class="{}">'.format(self.schemeProperties.className)
             schemPropXML += self.schemeProperties.getXML(version)
             schemPropXML += '</schemeProperties>'
 
-        xml = f'''
-            <pluginProperties/>
-            <pollConnectorProperties version="{version}">
-                {self.pollConnectorProperties.getXML(version)}
-            </pollConnectorProperties>
-            <sourceConnectorProperties version="{version}">
-                {self.sourceConnectorProperties.getXML(version)}
-            </sourceConnectorProperties>
-            {getXMLString(self.scheme, "scheme")}
-            {schemPropXML}
-            {getXMLString(self.host, "host")}
-            {getXMLString(self.fileFilter, "fileFilter")}
-            {getXMLString(self.regex, "regex")}
-            {getXMLString(self.directoryRecursion, "directoryRecursion")}
-            {getXMLString(self.ignoreDot, "ignoreDot")}
-            {getXMLString(self.anonymous, "anonymous")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.timeout, "timeout")}
-            {getXMLString(self.secure, "secure")}
-            {getXMLString(self.passive, "passive")}
-            {getXMLString(self.validateConnection, "validateConnection")}
-            {getXMLString(self.afterProcessingAction, "afterProcessingAction")}
-            {getXMLString(self.moveToDirectory, "moveToDirectory")}
-            {getXMLString(self.moveToFileName, "moveToFileName")}
-            {getXMLString(self.errprReadingAction, "errorReadingAction")}
-            {getXMLString(self.errorResponseAction, "errorResponseAction")}
-            {getXMLString(self.errorMoveToDirectory, "errorMoveToDirectory")}
-            {getXMLString(self.errorMoveToFileName, "errorMoveToFileName")}
-            {getXMLString(self.checkFileAge, "checkFileAge")}
-            {getXMLString(self.fileAge, "fileAge")}
-            {getXMLString(self.fileSizeMinimum, "fileSizeMinimum")}
-            {getXMLString(self.fileSizeMaximum, "fileSizeMaximum")}
-            {getXMLString(self.ignoreFileSizeMaximum, "ignoreFileSizeMaximum")}
-            {getXMLString(self.sortBy, "sortBy")}
-            {getXMLString(self.binary, "binary")}
-            {getXMLString(self.charsetEncoding, "charsetEncoding")}
-        '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<pollConnectorProperties version="{}">{}</pollConnectorProperties>'.format(version, self.pollConnectorProperties.getXML(version))
+        xml += '<sourceConnectorProperties version="{}">{}</sourceConnectorProperties>'.format(version, self.sourceConnectorProperties.getXML(version))
+        xml += getXMLString(self.schemeProperties.scheme, "scheme")
+        xml += schemPropXML
+        xml += getXMLString(escape(self.host), "host")
+        xml += getXMLString(self.fileFilter, "fileFilter")
+        xml += getXMLString(self.regex, "regex")
+        xml += getXMLString(self.directoryRecursion, "directoryRecursion")
+        xml += getXMLString(self.ignoreDot, "ignoreDot")
+        xml += getXMLString(self.anonymous, "anonymous")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.timeout, "timeout")
+        xml += getXMLString(self.secure, "secure")
+        xml += getXMLString(self.passive, "passive")
+        xml += getXMLString(self.validateConnection, "validateConnection")
+        xml += getXMLString(self.afterProcessingAction, "afterProcessingAction")
+        xml += getXMLString(self.moveToDirectory, "moveToDirectory")
+        xml += getXMLString(self.moveToFileName, "moveToFileName")
+        xml += getXMLString(self.errprReadingAction, "errorReadingAction")
+        xml += getXMLString(self.errorResponseAction, "errorResponseAction")
+        xml += getXMLString(self.errorMoveToDirectory, "errorMoveToDirectory")
+        xml += getXMLString(self.errorMoveToFileName, "errorMoveToFileName")
+        xml += getXMLString(self.checkFileAge, "checkFileAge")
+        xml += getXMLString(self.fileAge, "fileAge")
+        xml += getXMLString(self.fileSizeMinimum, "fileSizeMinimum")
+        xml += getXMLString(self.fileSizeMaximum, "fileSizeMaximum")
+        xml += getXMLString(self.ignoreFileSizeMaximum, "ignoreFileSizeMaximum")
+        xml += getXMLString(self.sortBy, "sortBy")
+        xml += getXMLString(self.binary, "binary")
+        xml += getXMLString(self.charsetEncoding, "charsetEncoding")
+
         return xml
         
 class HttpReceiverProperties(MirthElement):
@@ -610,18 +635,18 @@ class HttpReceiverProperties(MirthElement):
         self.pluginProperties = []
         self.listenerConnectorProperties = ListenerConnectorProperties()
         self.sourceConnectorProperties = SourceConnectorProperties()
-        self.xmlBody = ''
-        self.parseMultipart = ''
-        self.includeMetadata = ''
-        self.binaryMimeTypes = ''
-        self.binaryMimeTypesRegex = ''
-        self.responseContentType = ''
-        self.responseDataTypeBinary = ''
+        self.xmlBody = 'false'
+        self.parseMultipart = 'true'
+        self.includeMetadata = 'false'
+        self.binaryMimeTypes = 'application/.*(?<!json|xml)$|image/.*|video/.*|audio/.*'
+        self.binaryMimeTypesRegex = 'true'
+        self.responseContentType = 'text/plain'
+        self.responseDataTypeBinary = 'false'
         self.responseStatusCode = ''
         self.responseHeaders = LinkedHashMap()
         self.responseHeadersVariable = ''
-        self.useResponseHeadersVariable = ''
-        self.charset = ''
+        self.useResponseHeadersVariable = 'false'
+        self.charset = 'UTF-8'
         self.contextPath = ''
         self.timeout = '3000'
         self.staticResources = [] 
@@ -663,45 +688,40 @@ class HttpReceiverProperties(MirthElement):
         if len(self.pluginProperties) > 0:
             pluginPropXML = '''<pluginProperties>'''
             for p in self.pluginProperties:
-                pluginPropXML += f'''<{p.className} version="{version}">'''
-                pluginPropXML += f'''{p.getXML(version)}'''
-                pluginPropXML += f'''</{p.className}>'''
+                pluginPropXML += '<{} version="{}">'''.format(p.className, version)
+                pluginPropXML += p.getXML(version)
+                pluginPropXML += '</{}>'.format(p.className)
             pluginPropXML += '''</pluginProperties>'''
 
         staticResXML = '''<staticResources/>'''
         if len(self.staticResources) > 0:
             staticResXML = '''<staticResources>'''
             for p in self.staticResources:
-                staticResXML += f'''<{p.className}>'''
-                staticResXML += f'''{p.getXML(version)}'''
-                staticResXML += f'''</{p.className}>'''
-            staticResXML += '''</staticResources>'''
+                staticResXML += '<{}>'.format(p.className)
+                staticResXML += p.getXML(version)
+                staticResXML += '</{}>'.format(p.className)
+            staticResXML += '</staticResources>'
 
 
-        return f'''{pluginPropXML}
-                <listenerConnectorProperties version="3.12.0">
-                    {self.listenerConnectorProperties.getXML(version)}
-                </listenerConnectorProperties>
-                <sourceConnectorProperties version="3.12.0">
-                    {self.sourceConnectorProperties.getXML(version)}
-                </sourceConnectorProperties>
-                {getXMLString(self.xmlBody, "xmlBody")}
-                {getXMLString(self.parseMultipart, "parseMultipart")}
-                {getXMLString(self.includeMetadata, "includeMetadata")}
-                {getXMLString(escape(self.binaryMimeTypes), "binaryMimeTypes")}
-                {getXMLString(self.binaryMimeTypesRegex, "binaryMimeTypesRegex")}
-                {getXMLString(self.responseContentType, "responseContentType")}
-                {getXMLString(self.responseDataTypeBinary, "responseDataTypeBinary")}
-                {getXMLString(self.responseStatusCode, "responseStatusCode")}
-                <responseHeaders class="linked-hash-map">
-                    {self.responseHeaders.getXML(version)}
-                </responseHeaders>
-                {getXMLString(self.responseHeadersVariable, "responseHeadersVariable")}
-                {getXMLString(self.useResponseHeadersVariable, "useResponseHeadersVariable")}
-                {getXMLString(self.charset, "charset")}
-                {getXMLString(self.contextPath, "contextPath")}
-                {getXMLString(self.timeout, "timeout")}
-                {staticResXML}'''
+        xml = pluginPropXML
+        xml += '<listenerConnectorProperties version="{}">{}</listenerConnectorProperties>'.format(version, self.listenerConnectorProperties.getXML(version))
+        xml += '<sourceConnectorProperties version="{}">{}</sourceConnectorProperties>'.format(version, self.sourceConnectorProperties.getXML(version))
+        xml += getXMLString(self.xmlBody, "xmlBody")
+        xml += getXMLString(self.parseMultipart, "parseMultipart")
+        xml += getXMLString(self.includeMetadata, "includeMetadata")
+        xml += getXMLString(escape(self.binaryMimeTypes), "binaryMimeTypes")
+        xml += getXMLString(self.binaryMimeTypesRegex, "binaryMimeTypesRegex")
+        xml += getXMLString(self.responseContentType, "responseContentType")
+        xml += getXMLString(self.responseDataTypeBinary, "responseDataTypeBinary")
+        xml += getXMLString(self.responseStatusCode, "responseStatusCode")
+        xml += '<responseHeaders class="linked-hash-map">{}</responseHeaders>'.format(self.responseHeaders.getXML(version))
+        xml += getXMLString(self.responseHeadersVariable, "responseHeadersVariable")
+        xml += getXMLString(self.useResponseHeadersVariable, "useResponseHeadersVariable")
+        xml += getXMLString(self.charset, "charset")
+        xml += getXMLString(self.contextPath, "contextPath")
+        xml += getXMLString(self.timeout, "timeout")
+        xml += staticResXML
+        return xml
 
 class JmsReceiverProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -750,27 +770,26 @@ class JmsReceiverProperties(MirthElement):
             #     self.connectionProperties.append((strings[0].text, strings[1].text))
     
     def getXML(self, version = '3.12.0'):
-        xml = f'''
-            <pluginProperties/>
-            {getXMLString(self.useJndi, "useJndi")}
-            {getXMLString(self.jndiProviderUrl, "jndiProviderUrl")}
-            {getXMLString(self.jndiInitialContextFactory, "jndiInitialContextFactory")}
-            {getXMLString(self.jndiConnectionFactoryName, "jndiConnectionFactoryName")}
-            {getXMLString(self.connectionFactoryClass, "connectionFactoryClass")}
-            <connectionProperties class="linked-hash-map">
-                {self.connectionProperties.getXML(version)}
-            </connectionProperties>
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.destinationName, "destinationName")}
-            {getXMLString(self.topic, "topic")}
-            {getXMLString(self.clientId, "clientId")}
-            <sourceConnectorProperties version="{version}">
-                {self.sourceConnectorProperties.getXML(version)}
-            </sourceConnectorProperties>
-            {getXMLString(self.selector, "selector")}
-            {getXMLString(self.reconnectIntervalMillis, "reconnectIntervalMillis")}
-            {getXMLString(self.durableTopic, "durableTopic")}'''
+        xml = '<pluginProperties/>'
+        xml += getXMLString(self.useJndi, "useJndi")
+        xml += getXMLString(self.jndiProviderUrl, "jndiProviderUrl")
+        xml += getXMLString(self.jndiInitialContextFactory, "jndiInitialContextFactory")
+        xml += getXMLString(self.jndiConnectionFactoryName, "jndiConnectionFactoryName")
+        xml += getXMLString(self.connectionFactoryClass, "connectionFactoryClass")
+        xml += '<connectionProperties class="linked-hash-map">'
+        xml += self.connectionProperties.getXML(version)
+        xml += '</connectionProperties>'
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.destinationName, "destinationName")
+        xml += getXMLString(self.topic, "topic")
+        xml += getXMLString(self.clientId, "clientId")
+        xml += '<sourceConnectorProperties version="{}">'.format(version)
+        xml += self.sourceConnectorProperties.getXML(version)
+        xml += '</sourceConnectorProperties>'
+        xml += getXMLString(self.selector, "selector")
+        xml += getXMLString(self.reconnectIntervalMillis, "reconnectIntervalMillis")
+        xml += getXMLString(self.durableTopic, "durableTopic")
         return xml
     
 class JavaScriptReceiverProperties(MirthElement):
@@ -791,16 +810,15 @@ class JavaScriptReceiverProperties(MirthElement):
             self.script = self.getSafeText('script')
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''
-            <pluginProperties/>
-            <pollConnectorProperties version="{version}">
-                {self.pollConnectorProperties.getXML(version)}
-            </pollConnectorProperties>
-            <sourceConnectorProperties version="{version}">
-                {self.sourceConnectorProperties.getXML(version)}
-            </sourceConnectorProperties>
-            {getXMLString(escape(self.script), "script")}
-        '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<pollConnectorProperties version="{}">'.format(version)
+        xml += self.pollConnectorProperties.getXML(version)
+        xml += '</pollConnectorProperties>'
+        xml += '<sourceConnectorProperties version="{}">'.format(version)
+        xml += self.sourceConnectorProperties.getXML(version)
+        xml += '</sourceConnectorProperties>'
+        xml += getXMLString(escape(self.script), "script")
         return xml
 
 class TcpReceiverProperties(MirthElement):
@@ -853,31 +871,32 @@ class TcpReceiverProperties(MirthElement):
             self.responsePort = self.getSafeText('responsePort')
 
     def getXML(self, version = '3.12.0'):
-        xml = f'''
-            <pluginProperties/>
-            <listenerConnectorProperties version="{version}">
-                {self.listenerConnectorProperties.getXML(version)}
-            </listenerConnectorProperties>
-            <sourceConnectorProperties version="{version}">
-                {self.sourceConnectorProperties.getXML(version)}
-            </sourceConnectorProperties>
-            <transmissionModeProperties class="{self.transmissionModeProperties.className}">
-                {self.transmissionModeProperties.getXML(version)}
-            </transmissionModeProperties>
-            {getXMLString(self.serverMode, "serverMode")}
-            {getXMLString(self.remoteAddress, "remoteAddress")}
-            {getXMLString(self.remotePort, "remotePort")}
-            {getXMLString(self.overrideLocalBinding, "overrideLocalBinding")}
-            {getXMLString(self.reconnectInterval, "reconnectInterval")}
-            {getXMLString(self.receiveTimeout, "receiveTimeout")}
-            {getXMLString(self.bufferSize, "bufferSize")}
-            {getXMLString(self.maxConnections, "maxConnections")}
-            {getXMLString(self.keepConnectionOpen, "keepConnectionOpen")}
-            {getXMLString(self.dataTypeBinary, "dataTypeBinary")}
-            {getXMLString(self.charsetEncoding, "charsetEncoding")}
-            {getXMLString(self.respondOnNewConnection, "respondOnNewConnection")}
-            {getXMLString(self.responseAddress, "responseAddress")}
-            {getXMLString(self.responsePort, "responsePort")}'''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<listenerConnectorProperties version="{}">'.format(version)
+        xml += self.listenerConnectorProperties.getXML(version)
+        xml += '</listenerConnectorProperties>'
+        xml += '<sourceConnectorProperties version="{}">'.format(version)
+        xml += self.sourceConnectorProperties.getXML(version)
+        xml += '</sourceConnectorProperties>'
+        xml += '<transmissionModeProperties class="{}">'.format(self.transmissionModeProperties.className)
+        xml += self.transmissionModeProperties.getXML(version)
+        xml += '</transmissionModeProperties>'
+        xml += getXMLString(self.serverMode, "serverMode")
+        xml += getXMLString(self.remoteAddress, "remoteAddress")
+        xml += getXMLString(self.remotePort, "remotePort")
+        xml += getXMLString(self.overrideLocalBinding, "overrideLocalBinding")
+        xml += getXMLString(self.reconnectInterval, "reconnectInterval")
+        xml += getXMLString(self.receiveTimeout, "receiveTimeout")
+        xml += getXMLString(self.bufferSize, "bufferSize")
+        xml += getXMLString(self.maxConnections, "maxConnections")
+        xml += getXMLString(self.keepConnectionOpen, "keepConnectionOpen")
+        xml += getXMLString(self.dataTypeBinary, "dataTypeBinary")
+        xml += getXMLString(self.charsetEncoding, "charsetEncoding")
+        xml += getXMLString(self.respondOnNewConnection, "respondOnNewConnection")
+        xml += getXMLString(self.responseAddress, "responseAddress")
+        xml += getXMLString(self.responsePort, "responsePort")
+
         return xml
 
 class WebServiceReceiverProperties(MirthElement):
@@ -891,8 +910,8 @@ class WebServiceReceiverProperties(MirthElement):
         if len(self.root.find('./pluginProperties').findall('./*')) > 0:
             for e in self.root.find('./pluginProperties').findall('./*'):
                 prop = Mapping.httpAuthProperties(e.tag)
-        
-                self.pluginProperties.append(prop(e))
+                if prop is not None:
+                    self.pluginProperties.append(prop(e))
 
         self.sourceConnectorProperties = SourceConnectorProperties(self.root.find('sourceConnectorProperties'))
         self.listenerConnectorProperties = ListenerConnectorProperties(self.root.find('listenerConnectorProperties'))
@@ -907,23 +926,23 @@ class WebServiceReceiverProperties(MirthElement):
         if len(self.pluginProperties) > 0:
             pluginXml = "<pluginProperties>"
             for plugin in self.pluginProperties:
-                pluginXml += f'<{plugin.className} version="{version}">'
+                pluginXml += '<{} version="{}">'.format(plugin.className, version)
                 pluginXml += plugin.getXML(version)
-                pluginXml += f'</{plugin.className}>'
+                pluginXml += '</{}>'.format(plugin.className)
             pluginXml += "</pluginProperties>"
 
-        xml = f'''
-            {pluginXml}
-            <listenerConnectorProperties version="{version}">
-                {self.listenerConnectorProperties.getXML(version)}
-            </listenerConnectorProperties>
-            <sourceConnectorProperties version="{version}">
-                {self.sourceConnectorProperties.getXML(version)}
-            </sourceConnectorProperties>
-            {getXMLString(self.classNameT, "className")}
-            {getXMLString(self.serviceName, "serviceName")}
-            {getXMLString(escape(self.soapBinding), "soapBinding")}
-        '''
+        xml = ''
+        xml += pluginXml
+        xml += '<listenerConnectorProperties version="{}">'.format(version)
+        xml += self.listenerConnectorProperties.getXML(version)
+        xml += '</listenerConnectorProperties>'
+        xml += '<sourceConnectorProperties version="{}">'.format(version)
+        xml += self.sourceConnectorProperties.getXML(version)
+        xml += '</sourceConnectorProperties>'
+        xml += getXMLString(self.classNameT, "className")
+        xml += getXMLString(self.serviceName, "serviceName")
+        xml += getXMLString(escape(self.soapBinding), "soapBinding")
+
         return xml
         
 #endregion
@@ -960,18 +979,17 @@ class VmDispatcherProperties(ConnectorProperties):
     def getXML(self, version = "3.12.0"):
         mapVar = ""
         for mv in self.mapVariables:
-            mapVar += f"{getXMLString(mv, 'string')}"
+            mapVar += getXMLString(mv, 'string')
 
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(self.channelId, "channelId")
+        xml += getXMLString(self.channelTemplate, "channelTemplate")
+        xml += getXMLString(mapVar, "mapVariables", enclose=False)
 
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.channelId, "channelId")}
-            {getXMLString(self.channelTemplate, "channelTemplate")}
-            {getXMLString(mapVar, "mapVariables", enclose=False)}
-        '''
         return xml
 
 class JavaScriptDispatcherProperties(DestinationConnector):
@@ -985,12 +1003,12 @@ class JavaScriptDispatcherProperties(DestinationConnector):
             self.script = self.getSafeText('script')
 
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(escape(self.script), "script")}'''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(escape(self.script), "script")
         
         return xml
 
@@ -1047,33 +1065,34 @@ class FileDispatcherProperties(DestinationConnector):
     def getXML(self, version = "3.12.0"):
         schemePropXML = ""
         if self.schemeProperties is not None:
-            schemePropXML = f'''<schemeProperties class="{self.schemeProperties.className}">
-                                    {self.schemeProperties.getXML(version)}
-                                </schemeProperties>'''
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.scheme, "scheme")}                
-            {schemePropXML}
-            {getXMLString(self.host, "host")}
-            {getXMLString(self.outputPattern, "outputPattern")}
-            {getXMLString(self.anonymous, "anonymous")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.timeout, "timeout")}
-            {getXMLString(self.keepConnectionOpen, "keepConnectionOpen")}
-            {getXMLString(self.maxIdleTime, "maxIdleTime")}
-            {getXMLString(self.secure, "secure")}
-            {getXMLString(self.passive, "passive")}
-            {getXMLString(self.validateConnection, "validateConnection")}
-            {getXMLString(self.outputAppend, "outputAppend")}
-            {getXMLString(self.errorOnExists, "errorOnExists")}
-            {getXMLString(self.temporary, "temporary")}
-            {getXMLString(self.binary, "binary")}
-            {getXMLString(self.charsetEncoding, "charsetEncoding")}
-            {getXMLString(self.template, "template")}'''
+            schemePropXML = '<schemeProperties class="{}">'.format(self.schemeProperties.className)
+            schemePropXML += self.schemeProperties.getXML(version)
+            schemePropXML += '</schemeProperties>'
+
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(self.scheme, "scheme")                
+        xml += schemePropXML
+        xml += getXMLString(escape(self.host), "host")
+        xml += getXMLString(escape(self.outputPattern), "outputPattern")
+        xml += getXMLString(self.anonymous, "anonymous")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.timeout, "timeout")
+        xml += getXMLString(self.keepConnectionOpen, "keepConnectionOpen")
+        xml += getXMLString(self.maxIdleTime, "maxIdleTime")
+        xml += getXMLString(self.secure, "secure")
+        xml += getXMLString(self.passive, "passive")
+        xml += getXMLString(self.validateConnection, "validateConnection")
+        xml += getXMLString(self.outputAppend, "outputAppend")
+        xml += getXMLString(self.errorOnExists, "errorOnExists")
+        xml += getXMLString(self.temporary, "temporary")
+        xml += getXMLString(self.binary, "binary")
+        xml += getXMLString(self.charsetEncoding, "charsetEncoding")
+        xml += getXMLString(self.template, "template")
         
         return xml
 
@@ -1136,39 +1155,40 @@ class WebServiceDispatcherProperties(DestinationConnector):
         
         if len(self.wsdlDefinitionMap.entry) > 0:
             mapXML = '<map class="linked-hash-map">'
-            mapXML += f'{self.wsdlDefinitionMap.getXML(version)}'
+            mapXML += self.wsdlDefinitionMap.getXML(version)
             mapXML += '</map>'
 
-        return f'''
-            <pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.wsdlUrl, "wsdlUrl")}
-            {getXMLString(self.service, "service")}
-            {getXMLString(self.port, "port")}
-            {getXMLString(self.operation, "operation")}
-            {getXMLString(self.locationURI, "locationURI")}
-            {getXMLString(self.socketTimeout, "socketTimeout")}
-            {getXMLString(self.useAuthentication, "useAuthentication")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(escape(self.envelope), "envelope")}
-            {getXMLString(self.oneWay, "oneWay")}
-            {getXMLString(self.headers.getXML(version), "headers")}
-            {getXMLString(self.headersVariable, "headersVariable")}
-            {getXMLString(self.isUseHeadersVariable, "isUseHeadersVariable")}
-            {getXMLString(self.useMtom, "useMtom")}
-            {getXMLString(self.attachmentNames, "attachmentNames", enclose=False)}
-            {getXMLString(self.attachmentContents, "attachmentContents", enclose=False)}
-            {getXMLString(self.attachmentTypes, "attachmentTypes", enclose=False)}
-            {getXMLString(self.attachmentsVariable, "attachmentsVariable")}
-            {getXMLString(self.isUseAttachmentsVariable, "isUseAttachmentsVariable")}
-            {getXMLString(self.soapAction, "soapAction")}
-            <wsdlDefinitionMap>
-                {mapXML}
-            </wsdlDefinitionMap>
-            '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(self.wsdlUrl, "wsdlUrl")
+        xml += getXMLString(self.service, "service")
+        xml += getXMLString(self.port, "port")
+        xml += getXMLString(self.operation, "operation")
+        xml += getXMLString(self.locationURI, "locationURI")
+        xml += getXMLString(self.socketTimeout, "socketTimeout")
+        xml += getXMLString(self.useAuthentication, "useAuthentication")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(escape(self.envelope), "envelope")
+        xml += getXMLString(self.oneWay, "oneWay")
+        xml += getXMLString(self.headers.getXML(version), "headers")
+        xml += getXMLString(self.headersVariable, "headersVariable")
+        xml += getXMLString(self.isUseHeadersVariable, "isUseHeadersVariable")
+        xml += getXMLString(self.useMtom, "useMtom")
+        xml += getXMLString(self.attachmentNames, "attachmentNames", enclose=False)
+        xml += getXMLString(self.attachmentContents, "attachmentContents", enclose=False)
+        xml += getXMLString(self.attachmentTypes, "attachmentTypes", enclose=False)
+        xml += getXMLString(self.attachmentsVariable, "attachmentsVariable")
+        xml += getXMLString(self.isUseAttachmentsVariable, "isUseAttachmentsVariable")
+        xml += getXMLString(self.soapAction, "soapAction")
+        xml += '<wsdlDefinitionMap>'
+        xml += mapXML
+        xml += '</wsdlDefinitionMap>'
+        
+        return xml
 
 class DatabaseDispatcherProperties(DestinationConnector):
     def __init__(self, uXml = None):
@@ -1192,18 +1212,18 @@ class DatabaseDispatcherProperties(DestinationConnector):
             self.useScript = self.getSafeText('useScript')
     
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.driver, "driver")}
-            {getXMLString(self.url, "url")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(escape(self.query), "query")}
-            {getXMLString(self.useScript, "useScript")}
-        '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(self.driver, "driver")
+        xml += getXMLString(self.url, "url")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(escape(self.query), "query")
+        xml += getXMLString(self.useScript, "useScript")
+
         return xml
 
 class DICOMDispatcherProperties(DestinationConnector):
@@ -1288,47 +1308,47 @@ class DICOMDispatcherProperties(DestinationConnector):
             self.trustStorePW = self.getSafeText('trustStorePW')
 
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.host, "host")}
-            {getXMLString(self.port, "port")}
-            {getXMLString(self.applicationEntity, "applicationEntity")}
-            {getXMLString(self.localHost, "localHost")}
-            {getXMLString(self.localPort, "localPort")}
-            {getXMLString(self.localApplicationEntity, "localApplicationEntity")}
-            {getXMLString(self.template, "template")}
-            {getXMLString(self.acceptTo, "acceptTo")}
-            {getXMLString(self.asyncS, "async")}
-            {getXMLString(self.bufSize, "bufSize")}
-            {getXMLString(self.connectTo, "connectTo")}
-            {getXMLString(self.priority, "priority")}
-            {getXMLString(self.passcode, "passcode")}
-            {getXMLString(self.pdv1, "pdv1")}
-            {getXMLString(self.rcvpdulen, "rcvpdulen")}
-            {getXMLString(self.reaper, "reaper")}
-            {getXMLString(self.releaseTo, "releaseTo")}
-            {getXMLString(self.rspTo, "rspTo")}
-            {getXMLString(self.shutdownDelay, "shutdownDelay")}
-            {getXMLString(self.sndpdulen, "sndpdulen")}
-            {getXMLString(self.soCloseDelay, "soCloseDelay")}
-            {getXMLString(self.sorcvbuf, "sorcvbuf")}
-            {getXMLString(self.sosndbuf, "sosndbuf")}
-            {getXMLString(self.stgcmt, "stgcmt")}
-            {getXMLString(self.tcpDelay, "tcpDelay")}
-            {getXMLString(self.ts1, "ts1")}
-            {getXMLString(self.uidnegrsp, "uidnegrsp")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.keyPW, "keyPW")}
-            {getXMLString(self.keyStore, "keyStore")}
-            {getXMLString(self.keyStorePW, "keyStorePW")}
-            {getXMLString(self.noClientAuth, "noClientAuth")}
-            {getXMLString(self.nossl2, "nossl2")}
-            {getXMLString(self.tls, "tls")}
-            {getXMLString(self.trustStore, "trustStore")}
-            {getXMLString(self.trustStorePW, "trustStorePW")}'''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(escape(self.host), "host")
+        xml += getXMLString(self.port, "port")
+        xml += getXMLString(self.applicationEntity, "applicationEntity")
+        xml += getXMLString(self.localHost, "localHost")
+        xml += getXMLString(self.localPort, "localPort")
+        xml += getXMLString(self.localApplicationEntity, "localApplicationEntity")
+        xml += getXMLString(self.template, "template")
+        xml += getXMLString(self.acceptTo, "acceptTo")
+        xml += getXMLString(self.asyncS, "async")
+        xml += getXMLString(self.bufSize, "bufSize")
+        xml += getXMLString(self.connectTo, "connectTo")
+        xml += getXMLString(self.priority, "priority")
+        xml += getXMLString(self.passcode, "passcode")
+        xml += getXMLString(self.pdv1, "pdv1")
+        xml += getXMLString(self.rcvpdulen, "rcvpdulen")
+        xml += getXMLString(self.reaper, "reaper")
+        xml += getXMLString(self.releaseTo, "releaseTo")
+        xml += getXMLString(self.rspTo, "rspTo")
+        xml += getXMLString(self.shutdownDelay, "shutdownDelay")
+        xml += getXMLString(self.sndpdulen, "sndpdulen")
+        xml += getXMLString(self.soCloseDelay, "soCloseDelay")
+        xml += getXMLString(self.sorcvbuf, "sorcvbuf")
+        xml += getXMLString(self.sosndbuf, "sosndbuf")
+        xml += getXMLString(self.stgcmt, "stgcmt")
+        xml += getXMLString(self.tcpDelay, "tcpDelay")
+        xml += getXMLString(self.ts1, "ts1")
+        xml += getXMLString(self.uidnegrsp, "uidnegrsp")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.keyPW, "keyPW")
+        xml += getXMLString(self.keyStore, "keyStore")
+        xml += getXMLString(self.keyStorePW, "keyStorePW")
+        xml += getXMLString(self.noClientAuth, "noClientAuth")
+        xml += getXMLString(self.nossl2, "nossl2")
+        xml += getXMLString(self.tls, "tls")
+        xml += getXMLString(self.trustStore, "trustStore")
+        xml += getXMLString(self.trustStorePW, "trustStorePW")
         
         return xml
 
@@ -1381,31 +1401,31 @@ class TcpDispatcherProperties(DestinationConnector):
             self.template = self.getSafeText('template')
     
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            <transmissionModeProperties class="{self.transmissionModeProperties.className}">
-                {self.transmissionModeProperties.getXML(version)}
-            </transmissionModeProperties>
-            {getXMLString(self.serverMode, "serverMode")}
-            {getXMLString(self.remoteAddress, "remoteAddress")}
-            {getXMLString(self.remotePort, "remotePort")}
-            {getXMLString(self.overrideLocalBinding, "overrideLocalBinding")}
-            {getXMLString(self.localAddress, "localAddress")}
-            {getXMLString(self.localPort, "localPort")}
-            {getXMLString(self.sendTimeout, "sendTimeout")}
-            {getXMLString(self.bufferSize, "bufferSize")}
-            {getXMLString(self.maxConnections, "maxConnections")}
-            {getXMLString(self.keepConnectionOpen, "keepConnectionOpen")}
-            {getXMLString(self.checkRemoteHost, "checkRemoteHost")}
-            {getXMLString(self.responseTimeout, "responseTimeout")}
-            {getXMLString(self.ignoreResponse, "ignoreResponse")}
-            {getXMLString(self.queueOnResponseTimeout, "queueOnResponseTimeout")}
-            {getXMLString(self.dataTypeBinary, "dataTypeBinary")}
-            {getXMLString(self.charsetEncoding, "charsetEncoding")}
-            {getXMLString(self.template, "template")}'''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += '<transmissionModeProperties class="{}">'.format(self.transmissionModeProperties.className)
+        xml += self.transmissionModeProperties.getXML(version)
+        xml += '</transmissionModeProperties>'
+        xml += getXMLString(self.serverMode, "serverMode")
+        xml += getXMLString(self.remoteAddress, "remoteAddress")
+        xml += getXMLString(self.remotePort, "remotePort")
+        xml += getXMLString(self.overrideLocalBinding, "overrideLocalBinding")
+        xml += getXMLString(self.localAddress, "localAddress")
+        xml += getXMLString(self.localPort, "localPort")
+        xml += getXMLString(self.sendTimeout, "sendTimeout")
+        xml += getXMLString(self.bufferSize, "bufferSize")
+        xml += getXMLString(self.maxConnections, "maxConnections")
+        xml += getXMLString(self.keepConnectionOpen, "keepConnectionOpen")
+        xml += getXMLString(self.checkRemoteHost, "checkRemoteHost")
+        xml += getXMLString(self.responseTimeout, "responseTimeout")
+        xml += getXMLString(self.ignoreResponse, "ignoreResponse")
+        xml += getXMLString(self.queueOnResponseTimeout, "queueOnResponseTimeout")
+        xml += getXMLString(self.dataTypeBinary, "dataTypeBinary")
+        xml += getXMLString(self.charsetEncoding, "charsetEncoding")
+        xml += getXMLString(self.template, "template")
         
         return xml
 
@@ -1473,43 +1493,43 @@ class HttpDispatcherProperties(DestinationConnector):
             self.socketTimeout = self.getSafeText('socketTimeout')
     
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.host, "host")}
-            {getXMLString(self.useProxyServer, "useProxyServer")}
-            {getXMLString(self.proxyAddress, "proxyAddress")}
-            {getXMLString(self.proxyPort, "proxyPort")}
-            {getXMLString(self.method, "method")}
-            <headers class="linked-hash-map">
-                {self.headers.getXML(version)}
-            </headers>
-            <parameters class="linked-hash-map">
-                {self.parameters.getXML(version)}
-            </parameters>
-            {getXMLString(self.useHeadersVariable, "useHeadersVariable")}
-            {getXMLString(self.headersVariable, "headersVariable")}
-            {getXMLString(self.useParametersVariable, "useParametersVariable")}
-            {getXMLString(self.parametersVariable, "parametersVariable")}
-            {getXMLString(self.responseXmlBody, "responseXmlBody")}
-            {getXMLString(self.responseParseMultipart, "responseParseMultipart")}
-            {getXMLString(self.responseIncludeMetadata, "responseIncludeMetadata")}
-            {getXMLString(escape(self.responseBinaryMimeTypes), "responseBinaryMimeTypes")}
-            {getXMLString(self.responseBinaryMimeTypesRegex, "responseBinaryMimeTypesRegex")}
-            {getXMLString(self.multipart, "multipart")}
-            {getXMLString(self.useAuthentication, "useAuthentication")}
-            {getXMLString(self.authenticationType, "authenticationType")}
-            {getXMLString(self.usePreemptiveAuthentication, "usePreemptiveAuthentication")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.content, "content")}
-            {getXMLString(self.contentType, "contentType")}
-            {getXMLString(self.dataTypeBinary, "dataTypeBinary")}
-            {getXMLString(self.charset, "charset")}
-            {getXMLString(self.socketTimeout, "socketTimeout")}
-        '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(escape(self.host), "host")
+        xml += getXMLString(self.useProxyServer, "useProxyServer")
+        xml += getXMLString(self.proxyAddress, "proxyAddress")
+        xml += getXMLString(self.proxyPort, "proxyPort")
+        xml += getXMLString(self.method, "method")
+        xml += '<headers class="linked-hash-map">'
+        xml += self.headers.getXML(version)
+        xml += '</headers>'
+        xml += '<parameters class="linked-hash-map">'
+        xml += self.parameters.getXML(version)
+        xml += '</parameters>'
+        xml += getXMLString(self.useHeadersVariable, "useHeadersVariable")
+        xml += getXMLString(self.headersVariable, "headersVariable")
+        xml += getXMLString(self.useParametersVariable, "useParametersVariable")
+        xml += getXMLString(self.parametersVariable, "parametersVariable")
+        xml += getXMLString(self.responseXmlBody, "responseXmlBody")
+        xml += getXMLString(self.responseParseMultipart, "responseParseMultipart")
+        xml += getXMLString(self.responseIncludeMetadata, "responseIncludeMetadata")
+        xml += getXMLString(escape(self.responseBinaryMimeTypes), "responseBinaryMimeTypes")
+        xml += getXMLString(self.responseBinaryMimeTypesRegex, "responseBinaryMimeTypesRegex")
+        xml += getXMLString(self.multipart, "multipart")
+        xml += getXMLString(self.useAuthentication, "useAuthentication")
+        xml += getXMLString(self.authenticationType, "authenticationType")
+        xml += getXMLString(self.usePreemptiveAuthentication, "usePreemptiveAuthentication")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.content, "content")
+        xml += getXMLString(self.contentType, "contentType")
+        xml += getXMLString(self.dataTypeBinary, "dataTypeBinary")
+        xml += getXMLString(self.charset, "charset")
+        xml += getXMLString(self.socketTimeout, "socketTimeout")
+
         return xml
 
 class SmtpDispatcherProperties(DestinationConnector):
@@ -1580,43 +1600,43 @@ class SmtpDispatcherProperties(DestinationConnector):
         if len(self.attachments) > 0:
             attachXML = "<attachments>"
             for a in self.attachments:
-                attachXML += f"<{a.className}>"
-                attachXML += f"{a.getXML(version)}"
-                attachXML += f"</{a.className}>"
+                attachXML += "<{}>".format(a.className)
+                attachXML += a.getXML(version)
+                attachXML += "</{}>".format(a.className)
             attachXML += "</attachments>"    
 
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.smtpHost, "smtpHost")}
-            {getXMLString(self.smtpPort, "smtpPort")}
-            {getXMLString(self.overrideLocalBinding, "overrideLocalBinding")}
-            {getXMLString(self.localAddress, "localAddress")}
-            {getXMLString(self.localPort, "localPort")}
-            {getXMLString(self.timeout, "timeout")}
-            {getXMLString(self.encryption, "encryption")}
-            {getXMLString(self.authentication, "authentication")}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.to, "to")}
-            {getXMLString(self.fromT, "from")}
-            {getXMLString(self.cc, "cc")}
-            {getXMLString(self.bcc, "bcc")}
-            {getXMLString(self.replyTo, "replyTo")}
-            <headers class="linked-hash-map">
-                {self.headers.getXML(version)}
-            </headers>
-            {getXMLString(self.headersVariable, "headersVariable")}
-            {getXMLString(self.isUseHeadersVariable, "isUseHeadersVariable")}
-            {getXMLString(self.subject, "subject")}
-            {getXMLString(self.charsetEncoding, "charsetEncoding")}
-            {getXMLString(self.html, "html")}
-            {getXMLString(self.body, "body")}
-            {attachXML}
-            {getXMLString(self.attachmentsVariable, "attachmentsVariable")}
-            {getXMLString(self.isUseAttachmentsVariable, "isUseAttachmentsVariable")}'''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(self.smtpHost, "smtpHost")
+        xml += getXMLString(self.smtpPort, "smtpPort")
+        xml += getXMLString(self.overrideLocalBinding, "overrideLocalBinding")
+        xml += getXMLString(self.localAddress, "localAddress")
+        xml += getXMLString(self.localPort, "localPort")
+        xml += getXMLString(self.timeout, "timeout")
+        xml += getXMLString(self.encryption, "encryption")
+        xml += getXMLString(self.authentication, "authentication")
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.to, "to")
+        xml += getXMLString(self.fromT, "from")
+        xml += getXMLString(self.cc, "cc")
+        xml += getXMLString(self.bcc, "bcc")
+        xml += getXMLString(self.replyTo, "replyTo")
+        xml += '<headers class="linked-hash-map">'
+        xml += self.headers.getXML(version)
+        xml += '</headers>'
+        xml += getXMLString(self.headersVariable, "headersVariable")
+        xml += getXMLString(self.isUseHeadersVariable, "isUseHeadersVariable")
+        xml += getXMLString(self.subject, "subject")
+        xml += getXMLString(self.charsetEncoding, "charsetEncoding")
+        xml += getXMLString(self.html, "html")
+        xml += getXMLString(self.body, "body")
+        xml += attachXML
+        xml += getXMLString(self.attachmentsVariable, "attachmentsVariable")
+        xml += getXMLString(self.isUseAttachmentsVariable, "isUseAttachmentsVariable")
             
         return xml
 
@@ -1650,22 +1670,22 @@ class DocumentDispatcherProperties(DestinationConnector):
             self.template = self.getSafeText('template')
     
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-        	<pluginProperties/>
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-            {getXMLString(self.host, "host")}
-            {getXMLString(self.outputPattern, "outputPattern")}
-            {getXMLString(self.documentType, "documentType")}
-            {getXMLString(self.encrypt, "encrypt")}
-            {getXMLString(self.output, "output")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.pageWidth, "pageWidth")}
-            {getXMLString(self.pageHeight, "pageHeight")}
-            {getXMLString(self.pageUnit, "pageUnit")}
-            {getXMLString(self.template, "template")}
-        '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+        xml += getXMLString(escape(self.host), "host")
+        xml += getXMLString(escape(self.outputPattern), "outputPattern")
+        xml += getXMLString(self.documentType, "documentType")
+        xml += getXMLString(self.encrypt, "encrypt")
+        xml += getXMLString(self.output, "output")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.pageWidth, "pageWidth")
+        xml += getXMLString(self.pageHeight, "pageHeight")
+        xml += getXMLString(self.pageUnit, "pageUnit")
+        xml += getXMLString(self.template, "template")
+
         return xml
 
 class JmsDispatcherProperties(MirthElement):
@@ -1713,28 +1733,28 @@ class JmsDispatcherProperties(MirthElement):
             connectionPropXML = '<connectionProperties class="linked-hash-map">'
             for cp in self.connectionProperties:
                 
-                connectionPropXML += f'<entry><string>{cp[0]}</string>'
-                connectionPropXML += f'<string>{cp[1]}</string></entry>'
+                connectionPropXML += '<entry><string>{}</string>'.format(cp[0])
+                connectionPropXML += '<string>{}</string></entry>'.format(cp[1])
             connectionPropXML += '</connectionProperties>'
 
-        xml = f'''
-        	<pluginProperties/>
-            {getXMLString(self.useJndi, "useJndi")}
-            {getXMLString(self.jndiProviderUrl, "jndiProviderUrl")}
-            {getXMLString(self.jndiInitialContextFactory, "jndiInitialContextFactory")}
-            {getXMLString(self.jndiConnectionFactoryName, "jndiConnectionFactoryName")}
-            {getXMLString(self.connectionFactoryClass, "connectionFactoryClass")}
-            {connectionPropXML}
-            {getXMLString(self.username, "username")}
-            {getXMLString(self.password, "password")}
-            {getXMLString(self.destinationName, "destinationName")}
-            {getXMLString(self.topic, "topic")}
-            {getXMLString(self.clientId, "clientId")}
-            {getXMLString(self.template, "template")}
-            <destinationConnectorProperties version="{version}">
-                {self.destinationConnectorProperties.getXML(version)}
-            </destinationConnectorProperties>
-        '''
+        xml = ''
+        xml += '<pluginProperties/>'
+        xml += getXMLString(self.useJndi, "useJndi")
+        xml += getXMLString(self.jndiProviderUrl, "jndiProviderUrl")
+        xml += getXMLString(self.jndiInitialContextFactory, "jndiInitialContextFactory")
+        xml += getXMLString(self.jndiConnectionFactoryName, "jndiConnectionFactoryName")
+        xml += getXMLString(self.connectionFactoryClass, "connectionFactoryClass")
+        xml += connectionPropXML
+        xml += getXMLString(self.username, "username")
+        xml += getXMLString(self.password, "password")
+        xml += getXMLString(self.destinationName, "destinationName")
+        xml += getXMLString(self.topic, "topic")
+        xml += getXMLString(self.clientId, "clientId")
+        xml += getXMLString(self.template, "template")
+        xml += '<destinationConnectorProperties version="{}">'.format(version)
+        xml += self.destinationConnectorProperties.getXML(version)
+        xml += '</destinationConnectorProperties>'
+
         return xml
 
 class Map(MirthElement):
@@ -1756,10 +1776,11 @@ class Attachment(MirthElement):
             self.mimeType = self.getSafeText('mimeType')
 
     def getXML(self, version="3.12.0") -> str:
-        return f'''
-            {getXMLString(self.name, "name")}
-            {getXMLString(self.content, "content")}
-            {getXMLString(self.mimeType, "mimeType")}'''
+        xml = ''
+        xml += getXMLString(self.name, "name")
+        xml += getXMLString(self.content, "content")
+        xml += getXMLString(self.mimeType, "mimeType")
+        return xml
         
 class DestinationConnectorProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -1800,22 +1821,21 @@ class DestinationConnectorProperties(MirthElement):
             self.reattachAttachments = self.getSafeText('reattachAttachments')
     
     def getXML(self, version = "3.12.0"):
-
-        xml = f'''{getXMLString(self.queueEnabled, "queueEnabled")}
-                {getXMLString(self.sendFirst, "sendFirst")}
-                {getXMLString(self.retryIntervalMillis, "retryIntervalMillis")}
-                {getXMLString(self.regenerateTemplate, "regenerateTemplate")}
-                {getXMLString(self.retryCount, "retryCount")}
-                {getXMLString(self.rotate, "rotate")}
-                {getXMLString(self.includeFilterTransformer, "includeFilterTransformer")}
-                {getXMLString(self.threadCount, "threadCount")}
-                {getXMLString(self.threadAssignmentVariable, "threadAssignmentVariable")}
-                {getXMLString(self.validateResponse, "validateResponse")}
-                <resourceIds class="linked-hash-map">
-                    {self.resourceIds.getXML(version)}
-                </resourceIds>
-                {getXMLString(self.queueBufferSize, "queueBufferSize")}
-                {getXMLString(self.reattachAttachments, "reattachAttachments")}'''
+        xml = getXMLString(self.queueEnabled, "queueEnabled")
+        xml += getXMLString(self.sendFirst, "sendFirst")
+        xml += getXMLString(self.retryIntervalMillis, "retryIntervalMillis")
+        xml += getXMLString(self.regenerateTemplate, "regenerateTemplate")
+        xml += getXMLString(self.retryCount, "retryCount")
+        xml += getXMLString(self.rotate, "rotate")
+        xml += getXMLString(self.includeFilterTransformer, "includeFilterTransformer")
+        xml += getXMLString(self.threadCount, "threadCount")
+        xml += getXMLString(self.threadAssignmentVariable, "threadAssignmentVariable")
+        xml += getXMLString(self.validateResponse, "validateResponse")
+        xml += '<resourceIds class="linked-hash-map">'
+        xml += self.resourceIds.getXML(version)
+        xml += '</resourceIds>'
+        xml += getXMLString(self.queueBufferSize, "queueBufferSize")
+        xml += getXMLString(self.reattachAttachments, "reattachAttachments")
         return xml
 #endregion
 
@@ -1845,15 +1865,18 @@ class BasicHttpAuthProperties(MirthElement):
         propXML = "<credentials>"
         for prop in self.credentials:
             propXML += "<entry>"
-            propXML += f"{getXMLString(prop[0], 'string')}{getXMLString(prop[1], 'string')}"
+            propXML += getXMLString(prop[0], 'string')
+            propXML += getXMLString(prop[1], 'string')
             propXML += "</entry>"
         propXML += "</credentials>"
 
-        return f'''{getXMLString(self.authType, "authType")}
-                {getXMLString(self.realm, "realm")}
-                {propXML}
-                {getXMLString(self.isUseCredentialsVariable, "isUseCredentialsVariable")}
-                {getXMLString(self.credentialsVariable, "credentialsVariable")}'''
+        xml = getXMLString(self.authType, "authType")
+        xml += getXMLString(self.realm, "realm")
+        xml += propXML
+        xml += getXMLString(self.isUseCredentialsVariable, "isUseCredentialsVariable")
+        xml += getXMLString(self.credentialsVariable, "credentialsVariable")
+
+        return xml
 
 class DigestHttpAuthProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -1886,25 +1909,28 @@ class DigestHttpAuthProperties(MirthElement):
         propXML = "<credentials>"
         for prop in self.credentials:
             propXML += "<entry>"
-            propXML += f"{getXMLString(prop[0], 'string')}{getXMLString(prop[1], 'string')}"
+            propXML += getXMLString(prop[0], 'string')
+            propXML += getXMLString(prop[1], 'string')
             propXML += "</entry>"
         propXML += "</credentials>"
 
-        return f'''{getXMLString(self.authType, "authType")}
-                {getXMLString(self.realm, "realm")}
-                {propXML}
-                {getXMLString(self.isUseCredentialsVariable, "isUseCredentialsVariable")}
-                {getXMLString(self.credentialsVariable, "credentialsVariable")}
-                {getXMLString(self.qopModes, "qopModes")}
-                {getXMLString(self.opaque, "opaque")}
-                {getXMLString(self.algorithm, "authenticatorClass")}'''
+        xml = getXMLString(self.authType, "authType")
+        xml += getXMLString(self.realm, "realm")
+        xml += propXML
+        xml += getXMLString(self.isUseCredentialsVariable, "isUseCredentialsVariable")
+        xml += getXMLString(self.credentialsVariable, "credentialsVariable")
+        xml += getXMLString(self.qopModes, "qopModes")
+        xml += getXMLString(self.opaque, "opaque")
+        xml += getXMLString(self.algorithm, "authenticatorClass")
+
+        return xml
 
 class JavaScriptHttpAuthProperties(MirthElement):
     def __init__(self, uXml = None):
         MirthElement.__init__(self, uXml)
         self.className = 'com.mirth.connect.plugins.httpauth.javascript.JavaScriptHttpAuthProperties'
 
-        self.authType = ''
+        self.authType = 'JAVASCRIPT'
         self.script = ''
 
         if uXml is not None:
@@ -1912,8 +1938,10 @@ class JavaScriptHttpAuthProperties(MirthElement):
             self.script = self.getSafeText('script')
 
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.authType, "authType")}
-                    {getXMLString(escape(self.script), "script")}'''
+        xml = ""
+        xml += getXMLString(self.authType, "authType")
+        xml += getXMLString(escape(self.script), "script")
+        return xml
 
 class CustomHttpAuthProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -1936,13 +1964,17 @@ class CustomHttpAuthProperties(MirthElement):
         propXML = "<properties>"
         for prop in self.properties:
             propXML += "<entry>"
-            propXML += f"{getXMLString(prop[0], 'string')}{getXMLString(prop[1], 'string')}"
+            propXML += getXMLString(prop[0], 'string')
+            propXML += getXMLString(prop[1], 'string')
             propXML += "</entry>"
         propXML += "</properties>"
 
-        return f'''{getXMLString(self.authType, "authType")}
-            {getXMLString(self.authenticatorClass, "authenticatorClass")}
-            {propXML}'''
+        xml = ""
+        xml += getXMLString(self.authType, "authType")
+        xml += getXMLString(self.authenticatorClass, "authenticatorClass")
+        xml += propXML
+
+        return xml
 
 class OAuth2HttpAuthProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -1961,10 +1993,13 @@ class OAuth2HttpAuthProperties(MirthElement):
             self.verificationURL = self.getSafeText('verificationURL')
 
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.authType, "authType")}
-            {getXMLString(self.tokenLocation, "tokenLocation")}
-            {getXMLString(self.locationKey, "locationKey")}
-            {getXMLString(self.verificationURL, "verificationURL")}'''
+        xml = ""
+        xml += getXMLString(self.authType, "authType")
+        xml += getXMLString(self.tokenLocation, "tokenLocation")
+        xml += getXMLString(self.locationKey, "locationKey")
+        xml += getXMLString(self.verificationURL, "verificationURL")
+
+        return xml
 
 class NoneHttpAuthProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -1977,7 +2012,7 @@ class NoneHttpAuthProperties(MirthElement):
             self.authType = self.getSafeText('authType')
     
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.authType, 'authType')}'''
+        return getXMLString(self.authType, 'authType')
 #endregion
 
 #region Static Resources
@@ -1998,10 +2033,11 @@ class HttpStaticResource(MirthElement):
             self.contentType = self.getSafeText('contentType')
     
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.contextPath, 'contextPath')}
-                    {getXMLString(self.resourceType, 'resourceType')}
-                    {getXMLString(self.value, 'value')}
-                    {getXMLString(self.contentType, 'contentType')}'''
+        xml = getXMLString(self.contextPath, 'contextPath')
+        xml += getXMLString(self.resourceType, 'resourceType')
+        xml += getXMLString(self.value, 'value')
+        xml += getXMLString(self.contentType, 'contentType')
+        return xml
 
 #endregion
 
@@ -2009,11 +2045,13 @@ class HttpStaticResource(MirthElement):
 class SchemeProperties(MirthElement):
     def __init__(self, uXml = None):
         MirthElement.__init__(self, uXml)
+        self.scheme = 'FILE'
 
 class SftpSchemeProperties(SchemeProperties):
     def __init__(self, uXml = None):
         SchemeProperties.__init__(self, uXml)
         self.className = 'com.mirth.connect.connectors.file.SftpSchemeProperties'
+        self.scheme = 'SFTP'
 
         self.passwordAuth = 'true'
         self.keyAuth = 'false'
@@ -2042,20 +2080,19 @@ class SftpSchemeProperties(SchemeProperties):
             configSet = '<configurationSettings class="linked-hash-map">'
             for e in self.configurationSettings:
                 configSet += '<entry>'
-                configSet += f'<string>{e[0]}</string>'
-                configSet += f'<string>{e[1]}</string>'
+                configSet += '<string>{}</string>'.format(e[0])
+                configSet += '<string>{}</string>'.format(e[1])
                 configSet += '</entry>'
             configSet += '</configurationSettings>'
 
-        xml = f'''
-            {getXMLString(self.passwordAuth, "passwordAuth")}
-            {getXMLString(self.keyAuth, "keyAuth")}
-            {getXMLString(self.keyFile, "keyFile")}
-            {getXMLString(self.passPhrase, "passPhrase")}
-            {getXMLString(self.hostKeyChecking, "hostKeyChecking")}
-            {getXMLString(self.knownHostsFile, "knownHostsFile")}
-            {configSet}
-            '''
+        xml = ''
+        xml += getXMLString(self.passwordAuth, "passwordAuth")
+        xml += getXMLString(self.keyAuth, "keyAuth")
+        xml += getXMLString(self.keyFile, "keyFile")
+        xml += getXMLString(self.passPhrase, "passPhrase")
+        xml += getXMLString(self.hostKeyChecking, "hostKeyChecking")
+        xml += getXMLString(self.knownHostsFile, "knownHostsFile")
+        xml += configSet
         
         return xml
         
@@ -2063,7 +2100,7 @@ class FTPSchemeProperties(SchemeProperties):
     def __init__(self, uXml = None):
         SchemeProperties.__init__(self, uXml)
         self.className = 'com.mirth.connect.connectors.file.FTPSchemeProperties'
-
+        self.scheme = 'FTP'
         self.initalCommands = []
 
         if uXml is not None:
@@ -2083,7 +2120,8 @@ class S3SchemeProperties(SchemeProperties):
     def __init__(self, uXml = None):
         SchemeProperties.__init__(self, uXml)
         self.className = 'com.mirth.connect.connectors.file.S3SchemeProperties'
-
+        self.scheme = 'S3'
+        
         self.useDefaultCredentialProviderChain = 'true'
         self.useTemporaryCredentials = 'false'
         self.duration = '7200'
@@ -2104,20 +2142,20 @@ class S3SchemeProperties(SchemeProperties):
             customHeadersXML += self.customHeaders.getXML(version)
             customHeadersXML += '</customHeaders>'
 
-        xml = f'''
-            {getXMLString(self.useDefaultCredentialProviderChain, 'useDefaultCredentialProviderChain')}
-            {getXMLString(self.useTemporaryCredentials, 'useTemporaryCredentials')}
-            {getXMLString(self.duration, 'duration')}
-            {getXMLString(self.region, 'region')}
-            {customHeadersXML}
+        xml = ''
+        xml += getXMLString(self.useDefaultCredentialProviderChain, 'useDefaultCredentialProviderChain')
+        xml += getXMLString(self.useTemporaryCredentials, 'useTemporaryCredentials')
+        xml += getXMLString(self.duration, 'duration')
+        xml += getXMLString(self.region, 'region')
+        xml += customHeadersXML
             
-        '''
         return xml
 
 class SmbSchemeProperties(SchemeProperties):
     def __init__(self, uXml = None):
         SchemeProperties.__init__(self, uXml)
         self.className = 'com.mirth.connect.connectors.file.SmbSchemeProperties'
+        self.scheme = 'SMB'
 
         self.smbMinVersion = 'SMB202'
         self.smbMaxVersion = 'SMB311'
@@ -2127,10 +2165,9 @@ class SmbSchemeProperties(SchemeProperties):
             self.smbMaxVersion = self.getSafeText('smbMaxVersion')
     
     def getXML(self, version = "3.12.0"):
-        xml = f'''
-            {getXMLString(self.smbMinVersion, "smbMinVersion")}
-            {getXMLString(self.smbMaxVersion, "smbMaxVersion")}
-            '''
+        xml = ''
+        xml += getXMLString(self.smbMinVersion, "smbMinVersion")
+        xml += getXMLString(self.smbMaxVersion, "smbMaxVersion")
         
         return xml
 #endregion
@@ -2159,14 +2196,15 @@ class MLLPModeProperties(MirthElement):
             self.maxRetries = self.getSafeText('maxRetries')
 
     def getXML(self, version="3.12.0") -> str:
-        return f'''
-            {getXMLString(self.pluginPointName, "pluginPointName")}
-            {getXMLString(self.startOfMessageBytes, "startOfMessageBytes")}
-            {getXMLString(self.endOfMessageBytes, "endOfMessageBytes")}
-            {getXMLString(self.useMLLPv2, "useMLLPv2")}
-            {getXMLString(self.ackBytes, "ackBytes")}
-            {getXMLString(self.nackBytes, "nackBytes")}
-            {getXMLString(self.maxRetries, "maxRetries")}'''
+        xml = ''
+        xml += getXMLString(self.pluginPointName, "pluginPointName")
+        xml += getXMLString(self.startOfMessageBytes, "startOfMessageBytes")
+        xml += getXMLString(self.endOfMessageBytes, "endOfMessageBytes")
+        xml += getXMLString(self.useMLLPv2, "useMLLPv2")
+        xml += getXMLString(self.ackBytes, "ackBytes")
+        xml += getXMLString(self.nackBytes, "nackBytes")
+        xml += getXMLString(self.maxRetries, "maxRetries")
+        return xml
 
 class FrameModeProperties(MirthElement):
     def __init__(self, uXml = None):
@@ -2183,10 +2221,11 @@ class FrameModeProperties(MirthElement):
             self.endOfMessageBytes = self.getSafeText('endOfMessageBytes')
 
     def getXML(self, version="3.12.0") -> str:
-        return f'''
-            {getXMLString(self.pluginPointName, "pluginPointName")}
-            {getXMLString(self.startOfMessageBytes, "startOfMessageBytes")}
-            {getXMLString(self.endOfMessageBytes, "endOfMessageBytes")}'''
+        xml = ''
+        xml += getXMLString(self.pluginPointName, "pluginPointName")
+        xml += getXMLString(self.startOfMessageBytes, "startOfMessageBytes")
+        xml += getXMLString(self.endOfMessageBytes, "endOfMessageBytes")
+        return xml
 #endregion
 
 #region Mapping

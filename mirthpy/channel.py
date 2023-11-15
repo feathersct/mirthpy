@@ -1,9 +1,8 @@
 from .channelProperties import ChannelProperties
-from .utilities import getXMLString
+from .utilities import escape, getXMLString
 from .mirthDate import MirthDate
 from .connectors import DestinationConnectorElement, SourceConnector
 from .mirthElement import MirthElement
-import textwrap
 
 
 class Channel(MirthElement):
@@ -52,28 +51,26 @@ class Channel(MirthElement):
             i = i + 1
             if destination.metaDataId == '':
                 destination.metaDataId = str(i)
-            destinationXML += f'''<connector version="3.12.0">{destination.getXML(version)}</connector>'''
+            destinationXML += '''<connector version="3.12.0">{}</connector>'''.format(destination.getXML(version))
 
-        xml = f'''
-                {getXMLString(self.id, "id")}
-                {getXMLString(self.nextMetaDataId, "nextMetaDataId")}
-                {getXMLString(self.name, "name")}
-                {getXMLString(self.description, "description")}
-                {getXMLString(self.revision, "revision")}
-                <sourceConnector version="{version}">\
-                    {self.sourceConnector.getXML(version)}\
-                </sourceConnector>\
-                {getXMLString(destinationXML, "destinationConnectors")}
-                {getXMLString(self.preprocessingScript, "preprocessingScript")}
-                {getXMLString(self.postprocessingScript, "postprocessingScript")}
-                {getXMLString(self.deployScript, "deployScript")}
-                {getXMLString(self.undeployScript, "undeployScript")}
-                <properties version="{version}">\
-                    {self.properties.getXML()}\
-                </properties>\
-                {getXMLString(self.exportData.getXML(version), "exportData")}'''
-
-        return textwrap.dedent(xml)
+        xml = getXMLString(self.id, "id")
+        xml += getXMLString(self.nextMetaDataId, "nextMetaDataId")
+        xml += getXMLString(self.name, "name")
+        xml += getXMLString(escape(self.description), "description")
+        xml += getXMLString(self.revision, "revision")
+        xml += '<sourceConnector version="{}">'.format(version)
+        xml += self.sourceConnector.getXML(version)
+        xml += '</sourceConnector>'
+        xml += getXMLString(destinationXML, "destinationConnectors")
+        xml += getXMLString(escape(self.preprocessingScript), "preprocessingScript")
+        xml += getXMLString(escape(self.postprocessingScript), "postprocessingScript")
+        xml += getXMLString(escape(self.deployScript), "deployScript")
+        xml += getXMLString(escape(self.undeployScript), "undeployScript")
+        xml += '<properties version="{}">'.format(version)
+        xml += self.properties.getXML()
+        xml += '</properties>'
+        xml += getXMLString(self.exportData.getXML(version), "exportData")
+        return xml
 
 class ExportData(MirthElement):
     def __init__(self, uXml = None):
@@ -91,12 +88,10 @@ class ExportData(MirthElement):
             self.channelTags = self.root.find('channelTags')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''
-            {getXMLString(self.metadata.getXML(version), "metadata")}
-            {getXMLString(self.dependentIds, "dependentIds", includeIfEmpty=False)}
-            {getXMLString(self.dependencyIds, "dependencyIds", includeIfEmpty=False)}
-            {getXMLString(self.channelTags, "channelTags", includeIfEmpty=False)}
-            '''
+        xml = getXMLString(self.metadata.getXML(version), "metadata")
+        xml += getXMLString(self.dependentIds, "dependentIds", includeIfEmpty=False)
+        xml += getXMLString(self.dependencyIds, "dependencyIds", includeIfEmpty=False)
+        xml += getXMLString(self.channelTags, "channelTags", includeIfEmpty=False)
 
         return xml
 
@@ -113,10 +108,10 @@ class MetaData(MirthElement):
             self.pruningSettings = PruneSettings(self.root.find('pruningSettings'))
 
     def getXML(self, version="3.12.0"):
-        xml = f'''
-            {getXMLString(self.enabled, "enabled")}
-            {getXMLString(self.lastModified.getXML(version), "lastModified")}
-            {getXMLString(self.pruningSettings.getXML(version), "pruningSettings")}'''
+        xml = ''
+        xml += getXMLString(self.enabled, "enabled")
+        xml += getXMLString(self.lastModified.getXML(version), "lastModified")
+        xml += getXMLString(self.pruningSettings.getXML(version), "pruningSettings")
 
         return xml
 
@@ -125,14 +120,20 @@ class PruneSettings(MirthElement):
         MirthElement.__init__(self, uXml)
         self.archiveEnabled = 'true'
         self.pruneErroredMessages = 'false'
+        self.pruneMetaDataDays = ''
+        self.pruneContentDays = ''
 
         if uXml is not None:
             self.archiveEnabled = self.getSafeText('archiveEnabled')
             self.pruneErroredMessages = self.getSafeText('pruneErroredMessages')
+            self.pruneMetaDataDays = self.getSafeText('pruneMetaDataDays')
+            self.pruneContentDays = self.getSafeText('pruneContentDays')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''
-            {getXMLString(self.archiveEnabled, "archiveEnabled")}
-            {getXMLString(self.pruneErroredMessages, "pruneErroredMessages")}'''
+        xml = ''
+        xml += getXMLString(self.pruneMetaDataDays, "pruneMetaDataDays", includeIfEmpty=False)
+        xml += getXMLString(self.pruneContentDays, "pruneContentDays", includeIfEmpty=False)
+        xml += getXMLString(self.archiveEnabled, "archiveEnabled")
+        xml += getXMLString(self.pruneErroredMessages, "pruneErroredMessages")
 
         return xml

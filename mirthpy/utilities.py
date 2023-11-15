@@ -1,5 +1,7 @@
 from typing import Callable, List
+from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
+import urllib
 
 
 def getSafeText(self : Element, prop:str):
@@ -11,16 +13,16 @@ def build_encoded_url_params(**kwargs):
     for key, value in kwargs.items():
         if type(value) == list or type(value) == tuple:
             for x in value:
-                params.append(f"{key}={x}")
+                params.append(key + "=" + urllib.parse.quote_plus(x))
         elif type(value) == bool:
             if value:
-                params.append(f"{key}=true")
+                params.append(key + "=true")
             else:
-                params.append(f"{key}=false")
+                params.append(key + "=false")
         elif type(value) == type(None):
             continue
         else:
-            params.append(f"{key}={value}")
+            params.append(key + "=" + urllib.parse.quote_plus(value))
     
     return '?' + '&'.join(params)
 
@@ -32,6 +34,8 @@ def escape(text):
         ">": "&gt;",
         "<": "&lt;",
     }
+   if text is None:
+       return text
    
    return "".join(html_escape_table.get(c,c) for c in text)
  
@@ -42,12 +46,15 @@ def getXMLString(value, name, enclose=True, includeIfEmpty=True):
     if value is None:
         value = ""
     
-    xml = f"<{name}>{value}</{name}>"
+    xml = "<{}>{}</{}>".format(name, value, name)
 
     if not enclose and value == "":
-        xml = f"<{name}/>"
+        xml = "<{}/>".format(name)
 
     if not includeIfEmpty and value == "":
         xml = ""
+    
+    if type(value) == Element:
+        xml = ElementTree.tostring(value).decode().replace('\n', '')
 
     return xml

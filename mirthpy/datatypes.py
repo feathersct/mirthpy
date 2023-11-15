@@ -26,28 +26,53 @@ class HL7v2DataTypeProperties(DataTypeProperties):
             self.responseValidationProperties = HL7v2ResponseValidationProperties(self.root.find('responseValidationProperties'))
 
     def getXML(self, version="3.12.0"):
-        xml = f'''<serializationProperties class="{self.serializationProperties.className}" version="{version}">
-                    {self.serializationProperties.getXML(version)}
-                </serializationProperties>
-                <deserializationProperties class="{self.deserializationProperties.className}" version="{version}">
-                    {self.deserializationProperties.getXML(version)}
-                </deserializationProperties>
-                <batchProperties class="{self.batchProperties.className}" version="{version}">
-                    {self.batchProperties.getXML(version)}
-                </batchProperties>
-                <responseGenerationProperties class="{self.responseGenerationProperties.className}" version="{version}">
-                    {self.responseGenerationProperties.getXML(version)}
-                </responseGenerationProperties>
-                <responseValidationProperties class="{self.responseValidationProperties.className}" version="{version}">
-                    {self.responseValidationProperties.getXML(version)}
-                </responseValidationProperties>
-            '''
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<deserializationProperties class="{}" version="{}">'.format(self.deserializationProperties.className, version)
+        xml += self.deserializationProperties.getXML(version)
+        xml += '</deserializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+        xml += '<responseGenerationProperties class="{}" version="{}">'.format(self.responseGenerationProperties.className, version)
+        xml += self.responseGenerationProperties.getXML(version)
+        xml += '</responseGenerationProperties>'
+        xml += '<responseValidationProperties class="{}" version="{}">'.format(self.responseValidationProperties.className, version)
+        xml += self.responseValidationProperties.getXML(version)
+        xml += '</responseValidationProperties>'
+
+        return xml
+
+class HL7V3DataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.hl7v3.HL7V3DataTypeProperties'
+        self.dataType = 'HL7V3'
+
+        self.serializationProperties = HL7V3SerializationProperties()
+        self.batchProperties = HL7V3BatchProperties()
+
+        if uXml is not None:
+            self.serializationProperties = HL7V3SerializationProperties(self.root.find('serializationProperties'))
+            self.batchProperties = HL7V3BatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+
         return xml
 
 class XMLDataTypeProperties(DataTypeProperties):
     def __init__(self, uXml=None):
         DataTypeProperties.__init__(self, uXml)
         self.className = 'com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties'
+        self.dataType = 'XML'
+
         self.serializationProperties = XMLSerializationProperties()
         self.batchProperties = XMLBatchProperties()
 
@@ -56,20 +81,181 @@ class XMLDataTypeProperties(DataTypeProperties):
             self.batchProperties = XMLBatchProperties(self.root.find('batchProperties'))
 
     def getXML(self, version="3.12.0"):
-        xml = f'''<serializationProperties class="{self.serializationProperties.className}" version="{version}">
-                    {self.serializationProperties.getXML(version)}
-                </serializationProperties>
-                <batchProperties class="{self.batchProperties.className}" version="{version}">
-                    {self.batchProperties.getXML(version)}
-                </batchProperties>
-            '''
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+        return xml
+    
+class RawDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties'
+        self.dataType = 'RAW'
+
+        self.batchProperties = RawBatchProperties()
+
+        if uXml is not None:
+            self.batchProperties = RawBatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+        return xml
+
+class DelimitedDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.delimited.DelimitedDataTypeProperties'
+        self.dataType = 'DELIMITED'
+        self.serializationProperties = DelimitedSerializationProperties()
+        self.deserializationProperties = DelimitedDeserializationProperties()
+        self.batchProperties = DelimitedBatchProperties()
+
+        if uXml is not None:
+            self.serializationProperties = DelimitedSerializationProperties(self.root.find('serializationProperties'))
+            self.deserializationProperties = DelimitedDeserializationProperties(self.root.find('deserializationProperties'))
+            self.batchProperties = DelimitedBatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<deserializationProperties class="{}" version="{}">'.format(self.deserializationProperties.className, version)
+        xml += self.deserializationProperties.getXML(version)
+        xml += '</deserializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+        return xml
+
+class EDIDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.edi.EDIDataTypeProperties'
+        self.dataType = 'EDI/X12'
+
+        self.serializationProperties = EDISerializationProperties()
+        self.batchProperties = DelimitedBatchProperties()
+
+        if uXml is not None:
+            self.serializationProperties = EDISerializationProperties(self.root.find('serializationProperties'))
+            self.batchProperties = EDIBatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+        return xml
+
+class DICOMDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.dataType = 'DICOM'
+        self.className = 'com.mirth.connect.plugins.datatypes.dicom.DICOMDataTypeProperties'
+
+        # this data type doesn't have any properties
+
+class JSONDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties'
+        self.dataType = 'JSON'
+
+        self.batchProperties = JSONBatchProperties()
+
+        if uXml is not None:
+            self.batchProperties = JSONBatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+        return xml
+
+class NCPDPDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.ncpdp.NCPDPDataTypeProperties'
+        self.dataType = 'NCPDP'
+
+        self.serializationProperties = NCPDPSerializationProperties()
+        self.deserializationProperties = NCPDPDeserializationProperties()
+        self.batchProperties = NCPDPBatchProperties()
+
+        if uXml is not None:
+            self.serializationProperties = NCPDPSerializationProperties(self.root.find('serializationProperties'))
+            self.deserializationProperties = NCPDPDeserializationProperties(self.root.find('deserializationProperties'))
+            self.batchProperties = NCPDPBatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<deserializationProperties class="{}" version="{}">'.format(self.deserializationProperties.className, version)
+        xml += self.deserializationProperties.getXML(version)
+        xml += '</deserializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+
+        return xml
+
+class FhirDataTypeProperties(DataTypeProperties):
+    def __init__(self, uXml=None):
+        DataTypeProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.fhir.shared.FhirDataTypeProperties'
+        self.dataType = 'FHIR'
+
+        self.serializationProperties = FhirSerializationProperties()
+        self.deserializationProperties = FhirDeserializationProperties()
+        self.batchProperties = FhirBatchProperties()
+
+        if uXml is not None:
+            self.serializationProperties = FhirSerializationProperties(self.root.find('serializationProperties'))
+            self.deserializationProperties = FhirDeserializationProperties(self.root.find('deserializationProperties'))
+            self.batchProperties = FhirBatchProperties(self.root.find('batchProperties'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<serializationProperties class="{}" version="{}">'.format(self.serializationProperties.className, version)
+        xml += self.serializationProperties.getXML(version)
+        xml += '</serializationProperties>'
+        xml += '<deserializationProperties class="{}" version="{}">'.format(self.deserializationProperties.className, version)
+        xml += self.deserializationProperties.getXML(version)
+        xml += '</deserializationProperties>'
+        xml += '<batchProperties class="{}" version="{}">'.format(self.batchProperties.className, version)
+        xml += self.batchProperties.getXML(version)
+        xml += '</batchProperties>'
+
         return xml
 
 def datatypeProps(c: str) -> Type:
     if c == "com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DataTypeProperties":
         return HL7v2DataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.hl7v3.HL7V3DataTypeProperties":
+        return HL7V3DataTypeProperties
     elif c == "com.mirth.connect.plugins.datatypes.xml.XMLDataTypeProperties":
         return XMLDataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.raw.RawDataTypeProperties":
+        return RawDataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.delimited.DelimitedDataTypeProperties":
+        return DelimitedDataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.dicom.DICOMDataTypeProperties":
+        return DICOMDataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.edi.EDIDataTypeProperties":
+        return EDIDataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.json.JSONDataTypeProperties":
+        return JSONDataTypeProperties
+    elif c == "com.mirth.connect.plugins.datatypes.ncpdp.NCPDPDataTypeProperties":
+        return NCPDPDataTypeProperties
+    elif c == 'com.mirth.connect.plugins.datatypes.fhir.shared.FhirDataTypeProperties':
+        return FhirDataTypeProperties
     else:
         return DataTypeProperties
 #endregion
@@ -102,13 +288,29 @@ class HL7v2SerializationProperties(SerializationProperties):
             self.convertLineBreaks = self.getSafeText('convertLineBreaks')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.handleRepetitions, "handleRepetitions")}
-                {getXMLString(self.handleSubcomponents, "handleSubcomponents")}
-                {getXMLString(self.useStrictParser, "useStrictParser")}
-                {getXMLString(self.useStrictValidation, "useStrictValidation")}
-                {getXMLString(self.stripNamespaces, "stripNamespaces")}
-                {getXMLString(self.segmentDelimiter, "segmentDelimiter")}
-                {getXMLString(self.convertLineBreaks, "convertLineBreaks")}'''
+        xml = getXMLString(self.handleRepetitions, "handleRepetitions")
+        xml += getXMLString(self.handleSubcomponents, "handleSubcomponents")
+        xml += getXMLString(self.useStrictParser, "useStrictParser")
+        xml += getXMLString(self.useStrictValidation, "useStrictValidation")
+        xml += getXMLString(self.stripNamespaces, "stripNamespaces")
+        xml += getXMLString(self.segmentDelimiter, "segmentDelimiter")
+        xml += getXMLString(self.convertLineBreaks, "convertLineBreaks")
+
+        return xml
+
+class HL7V3SerializationProperties(SerializationProperties):
+    def __init__(self, uXml=None):
+        SerializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.hl7v3.HL7V3SerializationProperties'
+
+        self.stripNamespaces = 'false'
+
+        if uXml is not None:
+            self.stripNamespaces = self.getSafeText('stripNamespaces')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.stripNamespaces, "stripNamespaces")
+
         return xml
     
 class XMLSerializationProperties(SerializationProperties):
@@ -122,14 +324,117 @@ class XMLSerializationProperties(SerializationProperties):
             self.stripNamespaces = self.getSafeText('stripNamespaces')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.stripNamespaces, "stripNamespaces")}'''
+        xml = getXMLString(self.stripNamespaces, "stripNamespaces")
         return xml
     
+class DelimitedSerializationProperties(SerializationProperties):
+    def __init__(self, uXml=None):
+        SerializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.delimited.DelimitedSerializationProperties'
+
+        self.columnDelimiter = ','
+        self.recordDelimiter = '\\n'
+        self.quoteToken = '"'
+        self.escapeWithDoubleQuote = 'true'
+        self.quoteEscapeToken = '\\'
+        self.numberedRows = 'false'
+        self.ignoreCR = 'true'
+
+        if uXml is not None:
+            self.columnDelimiter = self.getSafeText('columnDelimiter')
+            self.recordDelimiter = self.getSafeText('recordDelimiter')
+            self.quoteToken = self.getSafeText('quoteToken')
+            self.escapeWithDoubleQuote = self.getSafeText('escapeWithDoubleQuote')
+            self.quoteEscapeToken = self.getSafeText('quoteEscapeToken')
+            self.numberedRows = self.getSafeText('numberedRows')
+            self.ignoreCR = self.getSafeText('ignoreCR')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.columnDelimiter, "columnDelimiter")
+        xml += getXMLString(self.recordDelimiter, "recordDelimiter")
+        xml += getXMLString(escape(self.quoteToken), "quoteToken")
+        xml += getXMLString(self.escapeWithDoubleQuote, "escapeWithDoubleQuote")
+        xml += getXMLString(self.quoteEscapeToken, "quoteEscapeToken")
+        xml += getXMLString(self.numberedRows, "numberedRows")
+        xml += getXMLString(self.ignoreCR, "ignoreCR")
+        return xml
+    
+class EDISerializationProperties(SerializationProperties):
+    def __init__(self, uXml=None):
+        SerializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.edi.EDISerializationProperties'
+
+        self.segmentDelimiter = '~'
+        self.elementDelimiter = '*'
+        self.subelementDelimiter = ':'
+        self.inferX12Delimiters = 'true'
+
+        if uXml is not None:
+            self.segmentDelimiter = self.getSafeText('segmentDelimiter')
+            self.elementDelimiter = self.getSafeText('elementDelimiter')
+            self.subelementDelimiter = self.getSafeText('subelementDelimiter')
+            self.inferX12Delimiters = self.getSafeText('inferX12Delimiters')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.segmentDelimiter, "segmentDelimiter")
+        xml += getXMLString(self.elementDelimiter, "elementDelimiter")
+        xml += getXMLString(self.subelementDelimiter, "subelementDelimiter")
+        xml += getXMLString(self.inferX12Delimiters, "inferX12Delimiters")
+        return xml
+    
+class NCPDPSerializationProperties(SerializationProperties):
+    def __init__(self, uXml=None):
+        SerializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.ncpdp.NCPDPSerializationProperties'
+
+        self.segmentDelimiter = '0x1E'
+        self.groupDelimiter = '0x1D'
+        self.fieldDelimiter = '0x1C'
+
+        if uXml is not None:
+            self.segmentDelimiter = self.getSafeText('segmentDelimiter')
+            self.groupDelimiter = self.getSafeText('groupDelimiter')
+            self.fieldDelimiter = self.getSafeText('fieldDelimiter')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.segmentDelimiter, "segmentDelimiter")
+        xml += getXMLString(self.groupDelimiter, "groupDelimiter")
+        xml += getXMLString(self.fieldDelimiter, "fieldDelimiter")
+        return xml
+
+class FhirSerializationProperties(SerializationProperties):
+    def __init__(self, uXml=None):
+        SerializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.fhir.shared.FhirSerializationProperties'
+
+        self.serializationType = 'JSON'
+        self.fhirVersion = 'R4'
+
+        if uXml is not None:
+            self.serializationType = self.getSafeText('serializationType')
+            self.fhirVersion = self.getSafeText('fhirVersion')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.serializationType, "serializationType")
+        xml += getXMLString(self.fhirVersion, "fhirVersion")
+        return xml
+
+
 def serializationProps(c: str) -> Type:
     if c == "com.mirth.connect.plugins.datatypes.hl7v2.HL7v2SerializationProperties":
         return HL7v2SerializationProperties
-    elif c == "com.mirth.connect.plugins.datatypes.hl7v2.HL7v2SerializationProperties":
+    elif c == "com.mirth.connect.plugins.datatypes.hl7v3.HL7V3SerializationProperties":
+        return HL7V3SerializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.xml.XMLSerializationProperties":
         return XMLSerializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.delimited.DelimitedSerializationProperties":
+        return DelimitedSerializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.edi.EDISerializationProperties":
+        return EDISerializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.ncpdp.NCPDPSerializationProperties":
+        return NCPDPSerializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.fhir.shared.FhirSerializationProperties":
+        return FhirSerializationProperties
     else:
         return SerializationProperties
 #endregion
@@ -154,14 +459,84 @@ class HL7v2DeserializationProperties(DeserializationProperties):
             self.segmentDelimiter = self.getSafeText('segmentDelimiter')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.useStrictParser, "useStrictParser")}
-                {getXMLString(self.useStrictValidation, "useStrictValidation")}
-                {getXMLString(self.segmentDelimiter, "segmentDelimiter")}'''
+        xml = getXMLString(self.useStrictParser, "useStrictParser")
+        xml += getXMLString(self.useStrictValidation, "useStrictValidation")
+        xml += getXMLString(self.segmentDelimiter, "segmentDelimiter")
+        return xml
+
+class DelimitedDeserializationProperties(DeserializationProperties):
+    def __init__(self, uXml=None):
+        DeserializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.delimited.DelimitedDeserializationProperties'
+
+        self.columnDelimiter = ','
+        self.recordDelimiter = '\\n'
+        self.quoteToken = '"'
+        self.escapeWithDoubleQuote = 'true'
+        self.quoteEscapeToken = '\\'
+
+        if uXml is not None:
+            self.columnDelimiter = self.getSafeText('columnDelimiter')
+            self.recordDelimiter = self.getSafeText('recordDelimiter')
+            self.quoteToken = self.getSafeText('quoteToken')
+            self.escapeWithDoubleQuote = self.getSafeText('escapeWithDoubleQuote')
+            self.quoteEscapeToken = self.getSafeText('quoteEscapeToken')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.columnDelimiter, "columnDelimiter")
+        xml += getXMLString(self.recordDelimiter, "recordDelimiter")
+        xml += getXMLString(escape(self.quoteToken), "quoteToken")
+        xml += getXMLString(self.escapeWithDoubleQuote, "escapeWithDoubleQuote")
+        xml += getXMLString(self.quoteEscapeToken, "quoteEscapeToken")
+        return xml
+
+class NCPDPDeserializationProperties(DeserializationProperties):
+    def __init__(self, uXml=None):
+        DeserializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.ncpdp.NCPDPDeserializationProperties'
+
+        self.segmentDelimiter = '0x1E'
+        self.groupDelimiter = '0x1D'
+        self.fieldDelimiter = '0x1C'
+        self.useStrictValidation = 'false'
+
+        if uXml is not None:
+            self.segmentDelimiter = self.getSafeText('segmentDelimiter')
+            self.groupDelimiter = self.getSafeText('groupDelimiter')
+            self.fieldDelimiter = self.getSafeText('fieldDelimiter')
+            self.useStrictValidation = self.getSafeText('useStrictValidation')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.segmentDelimiter, "segmentDelimiter")
+        xml += getXMLString(self.groupDelimiter, "groupDelimiter")
+        xml += getXMLString(self.fieldDelimiter, "fieldDelimiter")
+        xml += getXMLString(self.useStrictValidation, "useStrictValidation")
+        return xml
+
+class FhirDeserializationProperties(DeserializationProperties):
+    def __init__(self, uXml=None):
+        DeserializationProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.fhir.shared.FhirDeserializationProperties'
+
+        self.serializationType = 'JSON'
+
+        if uXml is not None:
+            self.serializationType = self.getSafeText('serializationType')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.serializationType, "serializationType")
         return xml
     
+
 def deserializationProps(c: str) -> Type:
     if c == "com.mirth.connect.plugins.datatypes.hl7v2.HL7v2DeserializationProperties":
         return HL7v2DeserializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.delimited.DelimitedDeserializationProperties":
+        return DelimitedDeserializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.ncpdp.NCPDPDeserializationProperties":
+        return NCPDPDeserializationProperties
+    elif c == "com.mirth.connect.plugins.datatypes.fhir.shared.FhirDeserializationProperties":
+        return FhirDeserializationProperties
     else:
         return DeserializationProperties
 #endregion
@@ -184,8 +559,25 @@ class HL7v2BatchProperties(BatchProperties):
             self.batchScript = self.getSafeText('batchScript')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.splitType, "splitType")}
-                {getXMLString(self.batchScript, "batchScript")}'''
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchScript, "batchScript")
+        return xml
+    
+class HL7V3BatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.hl7v3.HL7V3BatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchScript, "batchScript")
         return xml
     
 class XMLBatchProperties(BatchProperties):
@@ -207,18 +599,153 @@ class XMLBatchProperties(BatchProperties):
             self.batchScript = self.getSafeText('batchScript')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.splitType, "splitType")}
-                {getXMLString(self.elementName, "elementName")}
-                {getXMLString(self.level, "level")}
-                {getXMLString(self.query, "query")}
-                {getXMLString(self.batchScript, "batchScript")}'''
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.elementName, "elementName")
+        xml += getXMLString(self.level, "level")
+        xml += getXMLString(self.query, "query")
+        xml += getXMLString(self.batchScript, "batchScript")
+
+        return xml
+    
+class RawBatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.raw.RawBatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchScript, "batchScript")
+
+        return xml
+    
+class DelimitedBatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.delimited.DelimitedBatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchSkipRecords = '0'
+        self.batchMessageDelimiter = ''
+        self.batchMessageDelimiterIncluded = 'false'
+        self.batchGroupingColumn = ''
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchSkipRecords = self.getSafeText('batchSkipRecords')
+            self.batchMessageDelimiter = self.getSafeText('batchMessageDelimiter')
+            self.batchMessageDelimiterIncluded = self.getSafeText('batchMessageDelimiterIncluded')
+            self.batchGroupingColumn = self.getSafeText('batchGroupingColumn')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchSkipRecords, "batchSkipRecords")
+        xml += getXMLString(self.batchMessageDelimiter, "batchMessageDelimiter")
+        xml += getXMLString(self.batchMessageDelimiterIncluded, "batchMessageDelimiterIncluded")
+        xml += getXMLString(self.batchGroupingColumn, "batchGroupingColumn")
+        xml += getXMLString(self.batchScript, "batchScript")
+
+        return xml
+
+class EDIBatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.edi.EDIBatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchScript, "batchScript")
+
+        return xml
+
+class JSONBatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.json.JSONBatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchScript, "batchScript")
+
+        return xml
+
+class NCPDPBatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.ncpdp.NCPDPBatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(self.batchScript, "batchScript")
+
+        return xml
+
+class FhirBatchProperties(BatchProperties):
+    def __init__(self, uXml=None):
+        BatchProperties.__init__(self, uXml)
+        self.className = 'com.mirth.connect.plugins.datatypes.fhir.shared.FhirBatchProperties'
+
+        self.splitType = 'JavaScript'
+        self.batchScript = ''
+
+        if uXml is not None:
+            self.splitType = self.getSafeText('splitType')
+            self.batchScript = self.getSafeText('batchScript')
+
+    def getXML(self, version="3.12.0"):
+        xml = getXMLString(self.splitType, "splitType")
+        xml += getXMLString(escape(self.batchScript), "batchScript")
+
         return xml
 
 def batchProps(c: str) -> Type:
     if c == "com.mirth.connect.plugins.datatypes.hl7v2.HL7v2BatchProperties":
         return HL7v2BatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.hl7v3.HL7V3BatchProperties":
+        return HL7V3BatchProperties
     elif c == "com.mirth.connect.plugins.datatypes.xml.XMLBatchProperties":
         return XMLBatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.raw.RawBatchProperties":
+        return RawBatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.delimited.DelimitedBatchProperties":
+        return DelimitedBatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.edi.EDIBatchProperties":
+        return EDIBatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.json.JSONBatchProperties":
+        return JSONBatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.ncpdp.NCPDPBatchProperties":
+        return NCPDPBatchProperties
+    elif c == "com.mirth.connect.plugins.datatypes.fhir.shared.FhirBatchProperties":
+        return FhirBatchProperties
     else:
         return BatchProperties
 #endregion
@@ -255,15 +782,15 @@ class HL7v2ResponseGenerationProperties(ResponseGenerationProperties):
             self.dateFormat = self.getSafeText('dateFormat')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.segmentDelimiter, "segmentDelimiter")}
-        {getXMLString(self.successfulACKCode, "successfulACKCode")}
-        {getXMLString(self.successfulACKMessage, "successfulACKMessage")}
-        {getXMLString(self.errorACKCode, "errorACKCode")}
-        {getXMLString(self.errorACKMessage, "errorACKMessage")}
-        {getXMLString(self.rejectedACKCode, "rejectedACKCode")}
-        {getXMLString(self.rejectedACKMessage, "rejectedACKMessage")}
-        {getXMLString(self.msh15ACKAccept, "msh15ACKAccept")}
-        {getXMLString(self.dateFormat, "dateFormat")}'''
+        xml = getXMLString(self.segmentDelimiter, "segmentDelimiter")
+        xml += getXMLString(self.successfulACKCode, "successfulACKCode")
+        xml += getXMLString(self.successfulACKMessage, "successfulACKMessage")
+        xml += getXMLString(self.errorACKCode, "errorACKCode")
+        xml += getXMLString(self.errorACKMessage, "errorACKMessage")
+        xml += getXMLString(self.rejectedACKCode, "rejectedACKCode")
+        xml += getXMLString(self.rejectedACKMessage, "rejectedACKMessage")
+        xml += getXMLString(self.msh15ACKAccept, "msh15ACKAccept")
+        xml += getXMLString(self.dateFormat, "dateFormat")
 
         return xml
     
@@ -300,12 +827,12 @@ class HL7v2ResponseValidationProperties(ResponseValidationProperties):
             self.originalIdMapVariable = self.getSafeText('originalIdMapVariable')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''{getXMLString(self.successfulACKCode, "successfulACKCode")}
-        {getXMLString(self.errorACKCode, "errorACKCode")}
-        {getXMLString(self.rejectedACKCode, "rejectedACKCode")}
-        {getXMLString(self.validateMessageControlId, "validateMessageControlId")}
-        {getXMLString(self.originalMessageControlId, "originalMessageControlId")}
-        {getXMLString(self.originalIdMapVariable, "originalIdMapVariable")}'''
+        xml = getXMLString(self.successfulACKCode, "successfulACKCode")
+        xml += getXMLString(self.errorACKCode, "errorACKCode")
+        xml += getXMLString(self.rejectedACKCode, "rejectedACKCode")
+        xml += getXMLString(self.validateMessageControlId, "validateMessageControlId")
+        xml += getXMLString(self.originalMessageControlId, "originalMessageControlId")
+        xml += getXMLString(self.originalIdMapVariable, "originalIdMapVariable")
 
         return xml
 

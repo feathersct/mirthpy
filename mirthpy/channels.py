@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from .channel import Channel
 from .mirthElement import MirthElement
 

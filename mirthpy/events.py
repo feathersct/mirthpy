@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from .event import Event
 from .mirthElement import MirthElement
 

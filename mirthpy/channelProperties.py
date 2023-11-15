@@ -52,21 +52,23 @@ class ChannelProperties(MirthElement):
                 mdXml += '</metaDataColumn>'
             mdXml += '</metaDataColumns>'
 
-        return f'''{getXMLString(self.clearGlobalChannelMap, "clearGlobalChannelMap")}
-                    {getXMLString(self.messageStorageMode, "messageStorageMode")}
-                    {getXMLString(self.encryptData, "encryptData")}
-                    {getXMLString(self.removeContentOnCompletion, "removeContentOnCompletion")}
-                    {getXMLString(self.removeOnlyFilteredOnCompletion, "removeOnlyFilteredOnCompletion")}
-                    {getXMLString(self.removeAttachmentsOnCompletion, "removeAttachmentsOnCompletion")}
-                    {getXMLString(self.initialState, "initialState")}
-                    {getXMLString(self.storeAttachments, "storeAttachments")}
-                    {mdXml}
-                    <attachmentProperties version="{version}">
-                        {self.attachmentProperties.getXML(version)}
-                    </attachmentProperties>
-                    <resourceIds class="linked-hash-map">
-                        {self.resourceIds.getXML(version)}
-                    </resourceIds>'''
+        xml = getXMLString(self.clearGlobalChannelMap, "clearGlobalChannelMap")
+        xml += getXMLString(self.messageStorageMode, "messageStorageMode")
+        xml += getXMLString(self.encryptData, "encryptData")
+        xml += getXMLString(self.removeContentOnCompletion, "removeContentOnCompletion")
+        xml += getXMLString(self.removeOnlyFilteredOnCompletion, "removeOnlyFilteredOnCompletion")
+        xml += getXMLString(self.removeAttachmentsOnCompletion, "removeAttachmentsOnCompletion")
+        xml += getXMLString(self.initialState, "initialState")
+        xml += getXMLString(self.storeAttachments, "storeAttachments")
+        xml += mdXml
+        xml += '<attachmentProperties version="{}">'.format(version)
+        xml += self.attachmentProperties.getXML(version)
+        xml += '</attachmentProperties>'
+        xml += '<resourceIds class="linked-hash-map">'
+        xml += self.resourceIds.getXML(version)
+        xml += '</resourceIds>'
+
+        return xml
 
 class MetaDataColumn(MirthElement):
     def __init__(self, uXml = None):
@@ -81,9 +83,10 @@ class MetaDataColumn(MirthElement):
             self.mappingName = self.getSafeText('mappingName')
     
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.name, "name")}
-                    {getXMLString(self.type, "type")}
-                    {getXMLString(self.mappingName, "mappingName")}'''
+        xml = getXMLString(self.name, "name")
+        xml += getXMLString(self.type, "type")
+        xml += getXMLString(self.mappingName, "mappingName")
+        return xml
     
 
 class AttachmentProperties(MirthElement):
@@ -98,5 +101,4 @@ class AttachmentProperties(MirthElement):
             self.properties = None #TODO: build out different properties and change getXML
 
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.type, "type")}
-                    <properties/>'''
+        return '{}<properties/>'.format(getXMLString(self.type, "type"))

@@ -23,15 +23,14 @@ class ChannelStatistics(MirthElement):
             self.queued = self.getSafeText('queued')
 
     def getXML(self, version="3.12.0"):
-        xml = f'''
-            {getXMLString(self.serverId, "serverId")}
-            {getXMLString(self.channelId, "channelId")}
-            {getXMLString(self.received, "received")}
-            {getXMLString(self.sent, "sent")}
-            {getXMLString(self.error, "error")}            
-            {getXMLString(self.filtered, "filtered")}
-            {getXMLString(self.queued, "queued")}
-        '''
+        xml = ''
+        xml += getXMLString(self.serverId, "serverId")
+        xml += getXMLString(self.channelId, "channelId")
+        xml += getXMLString(self.received, "received")
+        xml += getXMLString(self.sent, "sent")
+        xml += getXMLString(self.error, "error")            
+        xml += getXMLString(self.filtered, "filtered")
+        xml += getXMLString(self.queued, "queued")
         return xml
     
 class ChannelStatisticsList(MirthElement):
@@ -49,5 +48,5 @@ class ChannelStatisticsList(MirthElement):
         for cs in self.channelStatistics:
             csXML += getXMLString(cs.getXML(version), "channelStatistics")
 
-        xml = f'''<list>{csXML}</list>'''
+        xml = '<list>{}</list>'.format(csXML)
         return xml

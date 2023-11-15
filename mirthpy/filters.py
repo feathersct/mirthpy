@@ -26,9 +26,9 @@ class Filter(MirthElement):
             i = 0
             for e in self.elements:
                 e.sequenceNumber = i
-                xml += f'<{e.className} version="{version}">'
+                xml += '<{} version="{}">'.format(e.className, version)
                 xml += e.getXML(version)
-                xml += f'</{e.className}>'
+                xml += '</{}>'.format(e.className)
                 i = i+1
             xml += '</elements>'
 
@@ -67,27 +67,27 @@ class RuleBuilderRule(FilterRule):
                 self.values.append(e.text)
 
     def getXML(self, version="3.12.0"):
-        name = f'Accept message if "{self.field}" {getConditionName(self.condition)}'
+        name = 'Accept message if "{}" {}'.format(self.field, getConditionName(self.condition))
         if len(self.values) > 0:
-            name += f' {" or ".join(self.values)}'
+            name += ' ' + " or ".join(self.values)
 
         valueXML = '<values/>'
         if len(self.values) > 0:
             valueXML = '<values>'
             for v in self.values:
-                valueXML += f"<string>{escape(v)}</string>"
+                valueXML += "<string>{}</string>".format(escape(v))
             valueXML += '</values>'
 
 
-        xml = f'''
-            {getXMLString(escape(name), 'name')}
-            {getXMLString(self.sequenceNumber, 'sequenceNumber')}
-            {getXMLString(self.enabled, 'enabled')}
-            {getXMLString(self.operator, 'operator', includeIfEmpty=False)}
-            {getXMLString(escape(self.field), 'field')}
-            {getXMLString(self.condition, 'condition')}
-            {valueXML}
-        '''
+        xml = ''
+        xml += getXMLString(escape(name), 'name')
+        xml += getXMLString(self.sequenceNumber, 'sequenceNumber')
+        xml += getXMLString(self.enabled, 'enabled')
+        xml += getXMLString(self.operator, 'operator', includeIfEmpty=False)
+        xml += getXMLString(escape(self.field), 'field')
+        xml += getXMLString(self.condition, 'condition')
+        xml += valueXML
+
         return xml
 
 class ExternalScriptRule(FilterRule):
@@ -100,11 +100,14 @@ class ExternalScriptRule(FilterRule):
             self.scriptPath = self.getSafeText('scriptPath')
 
     def getXML(self, version="3.12.0"):
-        return f'''{getXMLString(self.sequenceNumber, 'sequenceNumber')}
-                    {getXMLString(self.enabled, 'enabled')}
-                    {getXMLString(self.operator, 'operator', includeIfEmpty=False)}
-                    {getXMLString(self.scriptPath, "scriptPath")}'''
+        xml = ""
+        xml += getXMLString(self.sequenceNumber, 'sequenceNumber')
+        xml += getXMLString(self.enabled, 'enabled')
+        xml += getXMLString(self.operator, 'operator', includeIfEmpty=False)
+        xml += getXMLString(self.scriptPath, "scriptPath")
 
+        return xml
+    
 class JavaScriptRule(FilterRule):
     def __init__(self, uXml=None):
         FilterRule.__init__(self, uXml)
@@ -115,11 +118,13 @@ class JavaScriptRule(FilterRule):
             self.script = self.getSafeText('script')
 
     def getXML(self, version="3.12.0") -> str:
-        return f'''{getXMLString(self.name, 'name')}
-                    {getXMLString(self.sequenceNumber, 'sequenceNumber')}
-                    {getXMLString(self.enabled, 'enabled')}
-                    {getXMLString(self.operator, 'operator', includeIfEmpty=False)}
-                    {getXMLString(self.script, "script")}'''
+        xml = ""
+        xml += getXMLString(self.name, 'name')
+        xml += getXMLString(self.sequenceNumber, 'sequenceNumber')
+        xml += getXMLString(self.enabled, 'enabled')
+        xml += getXMLString(self.operator, 'operator', includeIfEmpty=False)
+        xml += getXMLString(escape(self.script), "script")
+        return xml
 
 class IteratorRule(FilterRule):
     def __init__(self, uXml=None):

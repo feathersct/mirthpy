@@ -1,4 +1,3 @@
-import xml.etree.ElementTree as ET
 from .mirthElement import MirthElement
 from .user import User
 
