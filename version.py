@@ -1,2 +1,2 @@
-__version__ = "0.3.7"
-__description__ = "Added support for quite a few more api calls."
+__version__ = "1.0.0"
+__description__ = "Full release with most api calls needed."

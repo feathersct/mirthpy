@@ -27,6 +27,9 @@ class MirthElement:
     def xmlString(self):
         return ElementTree.tostring(self.root, encoding='utf8', method='xml').decode()
 
+    def to_dict(self):
+        return {k: v for k, v in self.__dict__.items() if k != 'root'}
+
     def getSafeText(self, prop: str) -> str:
         return self.root.find(prop).text if self.root.find(prop) != None else None
 

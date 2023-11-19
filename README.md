@@ -3,7 +3,11 @@ Python api wrapper for Mirth Connect
 
 > **_NOTE:_**  This api wrapper is not totally complete with all of Mirth's REST api calls. If you have a request for a specific api call, please make an issue on GitHub.
 
-#### Table of Contents
+## Examples
+For specific examples and scripts that can be used, have a look at [mirthpy-examples](https://github.com/feathersct/mirthpy-scripts)
+
+
+### Table of Contents
 [Installation](#Installation)
 
 [Setup](#Setup)
