@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 
+from .extensions import Plugins
 from .serverSettings import ServerSettings
 from .channelIdAndName import ChannelIdAndName
 from .channelGroup import ChannelGroups
@@ -1004,6 +1005,18 @@ class MirthService:
         else:
             return (False, response.status_code + " Error: Could not update config maps.")
 
+    #endregion
+
+    #region Extensions
+    def getPlugins(self) -> Plugins:
+        r"""Returns all active plugin metadata.
+            
+            :return: :class:`Plugins <Plugins>` object
+            :rtype: Plugins
+            """
+        plugins = self._get("extensions/plugins")
+
+        return Plugins(plugins.content)
     #endregion
 
     #region Channel Statistics

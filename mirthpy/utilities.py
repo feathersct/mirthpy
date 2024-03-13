@@ -21,6 +21,8 @@ def build_encoded_url_params(**kwargs):
                 params.append(key + "=false")
         elif type(value) == type(None):
             continue
+        elif type(value) == int:
+            params.append(key + "=" + str(value))
         else:
             params.append(key + "=" + urllib.parse.quote_plus(value))
     

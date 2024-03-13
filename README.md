@@ -126,6 +126,7 @@ service.close() # to log out and close any service related objects
 | `GET /server/info` | `service.getSystemInfo()` | Gets information on underlying system. JvmVersion, OS Name, OS Version, OS Architecture, etc. |
 | `GET /server/configurationMap` | `service.getConfigurationMaps()` | Gets all configuration mappings |
 | `PUT /server/configurationMap` | `service.putConfigurationMaps(configurationMaps)` | Update all entries in the configuration map. |
+| `GET /server/settings` | `service.getServerSettings()` | Gets Mirth Server settings |
 
 ### Events
 
