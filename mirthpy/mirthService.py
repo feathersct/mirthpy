@@ -1,6 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 
+from .serverSettings import ServerSettings
 from .channelIdAndName import ChannelIdAndName
 from .channelGroup import ChannelGroups
 from .exceptions import UnauthorizedError
@@ -105,7 +106,8 @@ class MirthService:
 
         self.jsessionId = x.cookies.get('JSESSIONID')
         self.cookies['JSESSIONID'] = self.jsessionId
-        self.headers.pop('Content-Type')
+        if 'Content-Type' in self.headers:
+            self.headers.pop('Content-Type')
     
     def logout(self):
         r"""Logs out of the Mirth Connect server.
@@ -276,6 +278,17 @@ class MirthService:
         stats = self._get("system/info")
 
         return SystemInfo(stats.content)
+    
+    def getServerSettings(self) -> ServerSettings:
+        r"""Returns all server settings. This can include environment name, server name, default meta data columns, smtp settings, etc.
+        
+        :return: :class:`ServerSettings <ServerSettings>` object
+        :rtype: Server Settings for the mirth server.
+        """
+        settings = self._get("server/settings")
+
+        return ServerSettings(settings.content)
+
     #endregion
 
     #region Channel Calls
