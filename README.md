@@ -201,6 +201,8 @@ service.close() # to log out and close any service related objects
 | `GET /channels/{channelId}/statistics` | `service.getChannelStatistics(channelIds)` | Get a Channels Statistics  |
 
 ### Extensions
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
 | `GET /extensions/{extensionName}` | `service.getPluginByName(extensionName)` | Get plugin metadata by name  |
 | `GET /extensions/{extensionName}/enabled` | `service.isPluginEnabled(extensionName)` | Get whether a plugin is enabled  |
 | `GET /extensions/{extensionName}/properties` | `service.getExtensionProperties(extensionName, propertyKeys = [])` | Gets the properties associated with a specific extension  |
