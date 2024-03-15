@@ -200,6 +200,13 @@ service.close() # to log out and close any service related objects
 | `GET /channels/statistics` | `service.getChannelStatistics(channelIds, includeUndeployed, includeMetadataId, excludeMetaDataId, aggregateStates)` | Get Channel Statistics  |
 | `GET /channels/{channelId}/statistics` | `service.getChannelStatistics(channelIds)` | Get a Channels Statistics  |
 
+### Extensions
+| `GET /extensions/{extensionName}` | `service.getPluginByName(extensionName)` | Get plugin metadata by name  |
+| `GET /extensions/{extensionName}/enabled` | `service.isPluginEnabled(extensionName)` | Get whether a plugin is enabled  |
+| `GET /extensions/{extensionName}/properties` | `service.getExtensionProperties(extensionName, propertyKeys = [])` | Gets the properties associated with a specific extension  |
+| `GET /extensions/connectors` | `service.getConnectors()` | Gets metadata for all active connectors  |
+| `GET /extensions/plugins` | `service.getPlugins()` | Gets metadata for all active plugins  |
+
 
 ### Extensions (Commercial License)
 
@@ -207,8 +214,3 @@ service.close() # to log out and close any service related objects
 | :-------- | :------- | :------------------------- |
 | `GET /extensions/history/channels/{channelId}/snapshots` | `service.getChannelHistory(channelId)` | Get Channel History  |
 | `GET /extensions/history/channels/{channelId}/snapshots/{snapshotId}` | `service.getSnapshot(channelId, snapshotId)` | Get Channel History Snapshot  |
-| `GET /extensions/{extensionName}` | `service.getPluginByName(extensionName)` | Get plugin metadata by name  |
-| `GET /extensions/{extensionName}/enabled` | `service.isPluginEnabled(extensionName)` | Get whether a plugin is enabled  |
-| `GET /extensions/{extensionName}/properties` | `service.getExtensionProperties(extensionName, propertyKeys = [])` | Gets the properties associated with a specific extension  |
-| `GET /extensions/connectors` | `service.getConnectors()` | Gets metadata for all active connectors  |
-| `GET /extensions/plugins` | `service.getPlugins()` | Gets metadata for all active plugins  |
