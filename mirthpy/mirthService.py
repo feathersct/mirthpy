@@ -1,7 +1,7 @@
 import requests
 import xml.etree.ElementTree as ET
 
-from .extensions import Plugins
+from .extensions import Connectors, PluginMetaData, Plugins, Properties
 from .serverSettings import ServerSettings
 from .channelIdAndName import ChannelIdAndName
 from .channelGroup import ChannelGroups
@@ -1017,6 +1017,55 @@ class MirthService:
         plugins = self._get("extensions/plugins")
 
         return Plugins(plugins.content)
+    
+    def getPluginByName(self, extensionName) -> PluginMetaData:
+        r"""Returns active plugin metadata by name.
+            
+            :return: :class:`Plugins <Plugins>` object
+            :rtype: Plugins
+            """
+        plugins = self._get("extensions/{}".format(extensionName))
+
+        return PluginMetaData(plugins.content)
+    
+    def isPluginEnabled(self, extensionName) -> bool:
+        r"""Returns a boolean value if the extension is enabled. Returns a None, if it can't 
+            determine if the extension is enabled.
+            
+            :return: :class:`bool <bool>` object
+            :rtype: bool or None
+            """
+        response = self._get("extensions/{}/enabled".format(extensionName))
+
+        if response.text == '<boolean>true</boolean>':
+            return True
+        elif response.text == '<boolean>false</boolean>':
+            return False
+        else:
+            return None
+    
+    def getExtensionProperties(self, extensionName, propertyKeys = []) -> Properties:
+        r"""Returns filtered properties for a specified extension. If no value of propertyKeys
+            are given then all properties for the extension will be returned.
+            
+            :return: :class:`Properties <Properties>` object
+            :rtype: Properties
+            """
+        encParam = build_encoded_url_params(propertyKeys = propertyKeys)
+
+        properties = self._get("extensions/{}/properties{}".format(extensionName, encParam))
+
+        return Properties(properties.content)
+
+    def getConnectors(self) -> Connectors:
+        r"""Returns all active connector metadata.
+            
+            :return: :class:`Connectors <Connectors>` object
+            :rtype: Connectors
+            """
+        connectors = self._get("extensions/connectors")
+
+        return Connectors(connectors.content)
     #endregion
 
     #region Channel Statistics

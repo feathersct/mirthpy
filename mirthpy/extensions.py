@@ -135,3 +135,106 @@ class PluginClass(MirthElement):
         xml += '</pluginClass>'
         
         return xml
+    
+
+# Connector Models
+class Connectors(MirthElement):
+    def __init__(self, uXml=None):
+        MirthElement.__init__(self, uXml)
+
+        self.connectors = []
+
+        if uXml is not None:
+            for entry in self.root.findall('entry'):
+              self.connectors.append(ConnectorEntry(entry))
+              
+
+    def getXML(self, version):
+        xml = '<map>'
+        for connector in self.connectors:
+          xml += getXMLString(connector.getXML(version), 'entry')
+        xml += '</map>'
+        
+        return xml
+
+class ConnectorEntry(MirthElement):
+    def __init__(self, uXml=None):
+        MirthElement.__init__(self, uXml)
+        
+        self.name = ''
+        self.connector = ConnectorMetaData()
+
+        if uXml is not None:
+            self.name = self.getSafeText('string')
+            self.connector = ConnectorMetaData(self.root.find('connectorMetaData'))
+              
+    def getXML(self, version):
+        xml = getXMLString(self.name, "string")
+        xml += self.connector.getXML(version)
+        
+        return xml
+    
+class ConnectorMetaData(MirthElement):
+    def __init__(self, uXml=None):
+        MirthElement.__init__(self, uXml)
+
+        self.path = ''  # grabbed from the attribute 'path'
+        self.name = ''
+        self.author = ''
+        self.mirthVersion = ''
+        self.pluginVersion = ''
+        self.url = ''
+        self.description = ''
+        self.apiProviders = []
+        self.libraries = []
+        
+        self.templateClassName = ''
+        self.serverClassName = ''
+        self.sharedClassName = ''
+        self.clientClassName = ''
+        self.transformers = ''
+        self.protocol = ''
+        self.type = ''
+
+        if uXml is not None:
+            self.path = self.root.attrib.get('path')  # grabbed from the attribute 'path'
+            self.name = self.getSafeText('name')
+            self.author = self.getSafeText('author')
+            self.mirthVersion = self.getSafeText('mirthVersion')
+            self.pluginVersion = self.getSafeText('pluginVersion')
+            self.url = self.getSafeText('url')
+            self.description = self.getSafeText('description')
+            self.type = self.getSafeText('type')
+            self.templateClassName = self.getSafeText('templateClassName')
+            self.serverClassName = self.getSafeText('serverClassName')
+            self.sharedClassName = self.getSafeText('sharedClassName')
+            self.clientClassName = self.getSafeText('clientClassName')
+            self.transformers = self.getSafeText('transformers')
+            self.protocol = self.getSafeText('protocol')
+
+            for apiProvider in self.root.findall('apiProvider'):
+              self.apiProviders.append(ApiProvider(apiProvider.attrib.get('type'), apiProvider.attrib.get('name')))
+
+            for libary in self.root.findall('library'):
+              self.libraries.append(Library(libary.attrib.get('path'), libary.attrib.get('type')))
+
+class Properties(MirthElement):
+    def __init__(self, uXml=None):
+        MirthElement.__init__(self, uXml)
+
+        self.properties = []
+
+        if uXml is not None:
+            for property in self.root.findall('property'):
+                self.properties.append(Property(property))
+
+class Property(MirthElement):
+    def __init__(self, uXml=None):
+        MirthElement.__init__(self, uXml)
+
+        self.name = ''
+        self.value = ''
+
+        if uXml is not None:
+            self.name = self.root.attrib.get('name')
+            self.value = self.root.text
