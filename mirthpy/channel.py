@@ -95,6 +95,41 @@ class ExportData(MirthElement):
 
         return xml
 
+class MetaDataList(MirthElement):
+    def __init__(self, uXml = None):
+        MirthElement.__init__(self, uXml)
+        
+        self.entries = []
+
+        if uXml is not None:
+            for entry in self.root.findall('entry'):
+                self.entries.append(MetaDataEntry(entry))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<map>'
+        for entry in self.entries:
+            xml += entry.getXML(version)
+        xml += '</map>'
+        return xml
+    
+class MetaDataEntry(MirthElement):
+    def __init__(self, uXml = None):
+        MirthElement.__init__(self, uXml)
+        
+        self.channelId = ''
+        self.metaData = MetaData()
+
+        if uXml is not None:
+            self.channelId = self.getSafeText('string')
+            self.metaData = MetaData(self.root.find('com.mirth.connect.model.ChannelMetadata'))
+
+    def getXML(self, version="3.12.0"):
+        xml = '<entry>'
+        xml += getXMLString(self.channelId, "string")
+        xml += getXMLString(self.metaData.getXML(version), "com.mirth.connect.model.ChannelMetadata")
+        xml += '</entry>'
+        return xml
+
 class MetaData(MirthElement):
     def __init__(self, uXml = None):
         MirthElement.__init__(self, uXml)

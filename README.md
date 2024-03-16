@@ -113,20 +113,40 @@ service.close() # to log out and close any service related objects
 ```
 <a name="SupportedCalls"></a>
 ## Supported Mirth API Calls
-### Server
+### Server Configuration
 
 | Mirth API Route | mirthpy method | Description                |
 | :-------- | :------- | :------------------------- |
-| `GET /server/id` | `service.getServerId()` | Gets Mirth Instance Server Id |
-| `GET /server/version` | `service.getVersion()` | Gets Mirth Instance version |
 | `POST /server/_generateGUID` | `service.getGUID()` | Gets Mirth specific GUID for ids |
-| `GET /server/time` | `service.getTime()` | Gets current Mirth Server time |
+| `GET /server/about` | `service.getServerAbout` | |
+| `GET /server/buildDate` | `service.getServerBuildDate` | |
+| `GET /server/channelDependencies` | `service.getChannelDependencies` | |
+| `GET /server/channelMetadata` | `service.getChannelMetadata` | |
 | `GET /server/channelTags` | `service.getTags()` | Gets all tags |
-| `GET /server/stats` | `service.getSystemStats()` | Gets statistics for underlying system. Timestamp, cpu usage, allocated memory, etc. |
-| `GET /server/info` | `service.getSystemInfo()` | Gets information on underlying system. JvmVersion, OS Name, OS Version, OS Architecture, etc. |
+| `GET /server/charsets` | `service.getServerCharsets` | |
 | `GET /server/configurationMap` | `service.getConfigurationMaps()` | Gets all configuration mappings |
 | `PUT /server/configurationMap` | `service.putConfigurationMaps(configurationMaps)` | Update all entries in the configuration map. |
+| `GET /server/databaseDrivers` | `service.getDatabaseDrivers` | |
+| `GET /server/encryption` | `service.getEncryptionSettings` | |
+| `GET /server/globalScripts` | `service.getGlobalScripts` | |
+| `GET /server/id` | `service.getServerId()` | Gets Mirth Instance Server Id |
+| `GET /server/jvm` | `service.getServerJvm` | |
+| `GET /server/licenseInfo` | `service.getLicenseInfo` | |
+| `GET /server/passwordRequirements` | `service.getPasswordRequirements` | |
+| `GET /server/rhinoLanguageVersion` | `service.getRhinoVersion` | |
 | `GET /server/settings` | `service.getServerSettings()` | Gets Mirth Server settings |
+| `GET /server/status` | `service.getServerStatus` | |
+| `GET /server/time` | `service.getTime()` | Gets current Mirth Server time |
+| `GET /server/timezone` | `service.getTimezone` | |
+| `GET /server/version` | `service.getVersion()` | Gets Mirth Instance version |
+
+### Server Information and Statistics
+
+| Mirth API Route | mirthpy method | Description                |
+| :-------- | :------- | :------------------------- |
+| `GET /server/info` | `service.getSystemInfo()` | Gets information on underlying system. JvmVersion, OS Name, OS Version, OS Architecture, etc. |
+| `GET /server/stats` | `service.getSystemStats()` | Gets statistics for underlying system. Timestamp, cpu usage, allocated memory, etc. |
+
 
 ### Events
 

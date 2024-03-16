@@ -1,28 +1,29 @@
 import requests
 import xml.etree.ElementTree as ET
 
-from .extensions import Connectors, PluginMetaData, Plugins, Properties
-from .serverSettings import ServerSettings
 from .channelIdAndName import ChannelIdAndName
 from .channelGroup import ChannelGroups
-from .exceptions import UnauthorizedError
-from .serverStats import SystemStats
-from .serverInfo import SystemInfo
 from .channelStatus import DashboardStatusList, DashboardStatus
 from .channelStatistics import ChannelStatisticsList, ChannelStatistics
-from .mirthDate import MirthDate
-from .channelTag import ChannelTags
-from .message import Messages
-from .snapshot import Snapshot, Snapshots
-from .connectors import Map
-from .linkedHashMap import LinkedHashMap
-from .utilities import build_encoded_url_params
-from .configurationMaps import ConfigurationMaps
+from .channel import MetaDataList
 from .channels import Channels, Channel
+from .channelTag import ChannelTags
 from .codeTemplates import CodeTemplates
+from .configurationMaps import ConfigurationMaps
+from .exceptions import UnauthorizedError
 from .events import Events
-from .user import User
+from .extensions import Connectors, PluginMetaData, Plugins, Properties
+from .linkedHashMap import Entry, LinkedHashMap
+from .message import Messages
+from .mirthDate import MirthDate
+from .scripts import GlobalScripts
+from .serverInfo import ChannelDependencies, DriverInfoList, EncryptionSettings, LicenseInfo, ServerAbout, ServerConfiguration, SystemInfo
+from .serverSettings import ServerSettings
+from .serverStats import SystemStats
+from .snapshot import Snapshot, Snapshots
+from .user import PasswordRequirements, User
 from .users import Users
+from .utilities import build_encoded_url_params
 
 
 class MirthService:
@@ -83,15 +84,6 @@ class MirthService:
 
         results = requests.put(self.apiUrl + "/" + url, data=data, headers=headers, cookies=self.cookies, verify=False)
         return results
-
-    def getVersion(self) -> str:
-        r"""Returns the version of Mirth the server is running.
-            :return: the version of mirth
-            :rtype: str
-            """
-        version = self._get("server/version")
-
-        return version.text
     
     #region User Calls
     def login(self):
@@ -228,37 +220,7 @@ class MirthService:
         return Events(events.content)
     #endregion
 
-    #region Server Calls
-    def getGUID(self) -> str:
-        r"""Returns a globally unique id.
-
-        :return: guid 
-        :rtype: str
-        """
-        guid = self._post("server/_generateGUID")
-
-        return guid.text
-    
-    def getTime(self) -> MirthDate:
-        r"""Returns the time of the mirth server.
-
-        :return: :class:`MirthDate <MirthDate>` object
-        :rtype: MirthDate with current time
-        """
-        time = self._get("server/time")
-
-        return MirthDate(time.content)
-
-    def getTags(self) -> ChannelTags:
-        r"""Returns a set containing all channel tags for this Mirth Server. 
-        
-        :return: :class:`ChannelTags <ChannelTags>` object
-        :rtype: ChannelTags for the mirth server.
-        """
-        tags = self._get("server/channelTags")
-
-        return ChannelTags(tags.content)
-    
+    #region Server Calls    
     def getSystemStats(self) -> SystemStats:
         r"""Returns statistics for underlying system. This can include timestamp, cpu usage, allocated memory,
         free memory, max memory, free disk space, total disk space. 
@@ -279,16 +241,6 @@ class MirthService:
         stats = self._get("system/info")
 
         return SystemInfo(stats.content)
-    
-    def getServerSettings(self) -> ServerSettings:
-        r"""Returns all server settings. This can include environment name, server name, default meta data columns, smtp settings, etc.
-        
-        :return: :class:`ServerSettings <ServerSettings>` object
-        :rtype: Server Settings for the mirth server.
-        """
-        settings = self._get("server/settings")
-
-        return ServerSettings(settings.content)
 
     #endregion
 
@@ -971,11 +923,61 @@ class MirthService:
     #endregion
 
     #region Server Configuration
+    def getGUID(self) -> str:
+        r"""Returns a globally unique id.
+
+        :return: guid 
+        :rtype: str
+        """
+        guid = self._post("server/_generateGUID")
+
+        return guid.text    
+    
+    def getServerAbout(self) -> ServerAbout:
+        r"""Get common information about the Mirth server.
+            
+            :return: :class:`ServerAbout <ServerAbout>` object
+            :rtype: ServerAbout
+            """
+        about = self._get("server/about")
+
+        return ServerAbout(about.content)
+    
+    def getServerBuildDate(self) -> str:
+        r"""Get the build date of the Mirth server.
+            
+            :return: :class:`str <str>` object
+            :rtype: str
+            """
+        buildDate = self._get("server/buildDate")
+
+        return buildDate.text
+
+    def getChannelDependencies(self) -> ChannelDependencies:
+        r"""Get all channel dependencies.
+            
+            :return: :class:`ChannelDependencies <ChannelDependencies>` object
+            :rtype: ChannelDependencies
+            """
+        dependencies = self._get("server/channelDependencies")
+
+        return ChannelDependencies(dependencies.content)
+
+    def getChannelMetadata(self) -> MetaDataList:
+        r"""Get all channel metadata.
+            
+            :return: :class:`MetaDataList <MetaDataList>` object
+            :rtype: MetaDataList
+            """
+        metaData = self._get("server/channelMetadata")
+
+        return MetaDataList(metaData.content)
+
     def getServerId(self):
         server_id = self._get("server/id")
 
         return server_id.content
-    
+
     def getConfigurationMaps(self) -> ConfigurationMaps:
         r"""Get all configuration mappings.
             
@@ -1005,6 +1007,156 @@ class MirthService:
         else:
             return (False, response.status_code + " Error: Could not update config maps.")
 
+    def getTags(self) -> ChannelTags:
+        r"""Returns a set containing all channel tags for this Mirth Server. 
+        
+        :return: :class:`ChannelTags <ChannelTags>` object
+        :rtype: ChannelTags for the mirth server.
+        """
+        tags = self._get("server/channelTags")
+
+        return ChannelTags(tags.content)
+
+    def getServerCharsets(self) -> Entry:
+        r"""Get all charsets supported by this Mirth Server.
+            
+            :return: :class:`MetaDataList <MetaDataList>` object
+            :rtype: MetaDataList
+            """
+        charsets = self._get("server/charsets")
+
+        return Entry(charsets.content)
+    
+    def getDatabaseDrivers(self) -> DriverInfoList:
+        r"""Get the database driver list. 
+        
+        :return: :class:`DriverInfoList <DriverInfoList>` object
+        :rtype: DriverInfoList
+        """
+        driverInfo = self._get("server/databaseDrivers")
+
+        return DriverInfoList(driverInfo.content)
+    
+    def getEncryptionSettings(self) -> EncryptionSettings:
+        r"""Get the encryption settings for the Mirth Server.
+        
+        :return: :class:`EncryptionSettings <EncryptionSettings>` object
+        :rtype: EncryptionSettings
+        """
+        encryptionSettings = self._get("server/encryption")
+
+        return EncryptionSettings(encryptionSettings.content)
+
+    def getGlobalScripts(self) -> GlobalScripts:
+        r"""Get the global scripts for the Mirth Server.
+        
+        :return: :class:`GlobalScripts <GlobalScripts>` object
+        :rtype: GlobalScripts
+        """
+        globalScripts = self._get("server/globalScripts")
+
+        return GlobalScripts(globalScripts.content)
+    
+    def getServerJvm(self) -> str:
+        r"""Get the encryption settings for the Mirth Server.
+        
+        :return: :class:`str <str>` object
+        :rtype: str
+        """
+        jvm = self._get("server/jvm")
+
+        return jvm.text
+    
+    def getLicenseInfo(self) -> LicenseInfo:
+        r"""Get the license info like expiration for the Mirth Server.
+        
+        :return: :class:`LicenseInfo <LicenseInfo>` object
+        :rtype: LicenseInfo
+        """
+        license = self._get("server/licenseInfo")
+
+        return LicenseInfo(license.content)
+    
+    def getPasswordRequirements(self) -> PasswordRequirements:
+        r"""Get the password requirements for users for the Mirth Server.
+        
+        :return: :class:`PasswordRequirements <PasswordRequirements>` object
+        :rtype: PasswordRequirements
+        """
+        requirements = self._get("server/passwordRequirements")
+
+        return PasswordRequirements(requirements.content)
+    
+    # def getServerConfiguration(self, initialState = '', pollingOnly = False, disableAlerts = False) -> Entry:
+    #     r"""Get a ServerConfiguration object which contains all the channels, alerts, configuration map,
+    #         and properties.
+            
+    #         :return: :class:`ServerConfiguration <ServerConfiguration>` object
+    #         :rtype: ServerConfiguration
+    #         """
+    #     encParam = build_encoded_url_params(initialState = initialState, pollingOnly = pollingOnly, disableAlerts = disableAlerts)
+    #     charsets = self._get("server/configuration{}".format(encParam))
+
+    #     return ServerConfiguration(charsets.content)
+
+    def getTime(self) -> MirthDate:
+        r"""Returns the time of the mirth server.
+
+        :return: :class:`MirthDate <MirthDate>` object
+        :rtype: MirthDate with current time
+        """
+        time = self._get("server/time")
+
+        return MirthDate(time.content)    
+
+    def getTimezone(self) -> str:
+        r"""Returns the timezone Mirth is set to.
+
+        :return: :class:`str <str>` object
+        :rtype: str
+        """
+        timezone = self._get("server/timezone")
+
+        return timezone.text
+
+    def getRhinoVersion(self) -> int:
+        r"""Returns the language version that the Rhino engine should use.
+
+        :return: :class:`int <int>` object
+        :rtype: int
+        """
+        version = self._get("server/rhinoLanguageVersion")
+
+        return int(version.text.removeprefix('<int>').removesuffix('</int>'))
+
+    def getServerStatus(self) -> bool:
+        r"""Returns the status of Mirth Connect.
+
+        :return: :class:`bool <bool>` object
+        :rtype: bool
+        """
+        status = self._get("server/status")
+
+        return status.text.removeprefix('<int>').removesuffix('</int>') == '1'
+
+    def getServerSettings(self) -> ServerSettings:
+        r"""Returns all server settings. This can include environment name, server name, default meta data columns, smtp settings, etc.
+        
+        :return: :class:`ServerSettings <ServerSettings>` object
+        :rtype: Server Settings for the mirth server.
+        """
+        settings = self._get("server/settings")
+
+        return ServerSettings(settings.content)
+    
+    def getVersion(self) -> str:
+        r"""Returns the version of Mirth the server is running.
+            :return: the version of mirth
+            :rtype: str
+            """
+        version = self._get("server/version")
+
+        return version.text
     #endregion
 
     #region Extensions

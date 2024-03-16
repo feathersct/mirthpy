@@ -76,3 +76,50 @@ class User(MirthElement):
         xml += lastStrikeTime
 
         return xml
+    
+
+class PasswordRequirements(MirthElement):
+    def __init__(self, uXml):
+        MirthElement.__init__(self, uXml)
+
+        self.minLength = ''
+        self.minUpper = ''
+        self.minLower = ''
+        self.minNumeric = ''
+        self.minSpecial = ''
+        self.retryLimit = ''
+        self.lockoutPeriod = ''
+        self.expiration = ''
+        self.gracePeriod = ''
+        self.reusePeriod = ''
+        self.reuseLimit = ''
+
+        if uXml is not None:
+            self.minLength = self.getSafeText('minLength')
+            self.minUpper = self.getSafeText('minUpper')
+            self.minLower = self.getSafeText('minLower')
+            self.minNumeric = self.getSafeText('minNumeric')
+            self.minSpecial = self.getSafeText('minSpecial')
+            self.retryLimit = self.getSafeText('retryLimit')
+            self.lockoutPeriod = self.getSafeText('lockoutPeriod')
+            self.expiration = self.getSafeText('expiration')
+            self.gracePeriod = self.getSafeText('gracePeriod')
+            self.reusePeriod = self.getSafeText('reusePeriod')
+            self.reuseLimit = self.getSafeText('reuseLimit')
+
+    def getXML(self, version="3.12.0"):
+        xml = '<passwordRequirements>'
+        xml += getXMLString(self.minLength, 'minLength')
+        xml += getXMLString(self.minUpper, 'minUpper')
+        xml += getXMLString(self.minLower, 'minLower')
+        xml += getXMLString(self.minNumeric, 'minNumeric')
+        xml += getXMLString(self.minSpecial, 'minSpecial')
+        xml += getXMLString(self.retryLimit, 'retryLimit')
+        xml += getXMLString(self.lockoutPeriod, 'lockoutPeriod')
+        xml += getXMLString(self.expiration, 'expiration')
+        xml += getXMLString(self.gracePeriod, 'gracePeriod')
+        xml += getXMLString(self.reusePeriod, 'reusePeriod')
+        xml += getXMLString(self.reuseLimit, 'reuseLimit')
+        xml += '</passwordRequirements>'
+
+        return xml
